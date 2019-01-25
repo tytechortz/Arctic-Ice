@@ -46,14 +46,22 @@ app.layout = html.Div([
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('xaxis', 'value')])
-def update_graph(xaxis_name):
+    [Input('xaxis', 'value'),
+    Input('decade', 'value')])
+def update_graph(xaxis_name, decade):
+    traces = []
+    traces.append(go.Scatter(
+        x=df['#num'],
+        y=df[xaxis_name],
+        mode='markers', 
+    ))
+    traces.append(go.Scatter(
+        x=df['#num'],
+        y=df[decade],
+        mode='markers',
+    ))
     return {
-        'data': [go.Scatter(
-            x=df['#num'],
-            y=df[xaxis_name],
-            mode='markers',
-        )],
+        'data': traces,
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
                 xaxis = {'title': 'Day'},
