@@ -29,8 +29,9 @@ app.layout = html.Div([
             # multi=True
             # value='#num'
         )
-    ]),
-
+    ],
+    style={'width': '48%', 'display': 'inline-block'}),
+    
     html.Div([
         dcc.RadioItems(
             id='decade',
@@ -41,7 +42,8 @@ app.layout = html.Div([
                 {'label': "2010's Avg", 'value': "2010's Average"},
                 ],
         )
-    ]),
+    ],
+    style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
 ])
 
 @app.callback(
