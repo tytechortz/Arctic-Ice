@@ -24,6 +24,7 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='xaxis',
             options=[{'label': i, 'value': i} for i in years],
+            placeholder='select years'
             # value='#num'
         )
     ])
