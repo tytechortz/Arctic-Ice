@@ -17,35 +17,37 @@ df = pd.read_sql_query("SELECT * FROM ice", cnx)
 
 years = df.columns 
 
+
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
 
     html.Div([
-        html.Div([
-            dcc.RadioItems(
-                id='decade',
-                options=[
-                    {'label': "1980's Avg", 'value': "1980's Avg"}
+        dcc.Dropdown(
+            id='xaxis',
+            options=[{'label': i, 'value': i} for i in years],
+            placeholder='select years',
+            # multi=True
+            # value='#num'
+        )
+    ]),
+
+    html.Div([
+        dcc.RadioItems(
+            id='decade',
+            options=[
+                {'label': "1980's Avg", 'value': "1980's Average"},
+                {'label': "1990's Avg", 'value': "1990's Average"},
+                {'label': "2000's Avg", 'value': "2000's Average"},
+                {'label': "2010's Avg", 'value': "2010's Average"},
                 ],
-            )
-        ]),
-        html.Div([
-            dcc.Dropdown(
-                id='xaxis',
-                options=[{'label': i, 'value': i} for i in years],
-                placeholder='select years'
-                # value='#num'
-            )
-        ]),
-        
-    ])
+        )
+    ]),
 ])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('xaxis', 'value'),
-    Input('decade', 'value')])
-def update_graph(xaxis_name, decade_name):
+    [Input('xaxis', 'value')])
+def update_graph(xaxis_name):
     return {
         'data': [go.Scatter(
             x=df['#num'],
