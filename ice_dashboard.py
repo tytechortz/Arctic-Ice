@@ -21,19 +21,31 @@ app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
 
     html.Div([
-        dcc.Dropdown(
-            id='xaxis',
-            options=[{'label': i, 'value': i} for i in years],
-            placeholder='select years'
-            # value='#num'
-        )
+        html.Div([
+            dcc.RadioItems(
+                id='decade',
+                options=[
+                    {'label': "1980's Avg", 'value': "1980's Avg"}
+                ],
+            )
+        ]),
+        html.Div([
+            dcc.Dropdown(
+                id='xaxis',
+                options=[{'label': i, 'value': i} for i in years],
+                placeholder='select years'
+                # value='#num'
+            )
+        ]),
+        
     ])
 ])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('xaxis', 'value')])
-def update_graph(xaxis_name):
+    [Input('xaxis', 'value'),
+    Input('decade', 'value')])
+def update_graph(xaxis_name, decade_name):
     return {
         'data': [go.Scatter(
             x=df['#num'],
