@@ -33,13 +33,14 @@ app.layout = html.Div([
 @app.callback(
     Output('ice-extent', 'figure'),
     [Input('xaxis', 'value')])
-def update_graph(xaxis_name):
+def update_graph(selected_year):
+    
     return{
         'data': [
             go.Scatter(
                 x = df['#num'],
-                y = df['2000'],
-                mode='markers',
+                y = df[selected_year],
+                mode='lines',
         )],
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
@@ -48,27 +49,6 @@ def update_graph(xaxis_name):
                 hovermode='closest'
             )
     }
-
-# app.layout = html.Div([
-#     dcc.Graph(
-#         id='ice',
-#         figure={
-#             'data': [
-#                 go.Scatter(
-#                     x = df['#num'],
-#                     y = df['2000'],
-#                     mode = 'markers'
-#                 )
-#             ],
-#             'layout': go.Layout(
-#                 title = 'Arctic Sea Ice Extent',
-#                 xaxis = {'title': 'Day'},
-#                 yaxis = {'title': 'Ice Extent in km2'},
-#                 hovermode='closest'
-#             )
-#         }
-#     )
-# ])
 
 # Add the server clause:
 if __name__ == '__main__':
