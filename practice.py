@@ -19,33 +19,51 @@ years = df.columns[4:]
 
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
+        html.Div([
+            html.Div([
+                dcc.Dropdown(
+                id='year1',
+                options=[{'label': i, 'value': i} for i in years],
+                placeholder='select years'),
+                # value='#num'
+            ]),
+            html.Div([
+                dcc.Dropdown(
+                id='year2',
+                options=[{'label': i, 'value': i} for i in years],
+                placeholder='select years'),
+            ]),
+        ])
 
-    html.Div([
-        dcc.Dropdown(
-            id='xaxis',
-            options=[{'label': i, 'value': i} for i in years],
-            placeholder='select years'
-            # value='#num'
-        )
-    ])
+    
 ])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('xaxis', 'value')])
-def update_graph(xaxis_name):
-    return {
-        'data': [go.Scatter(
+    [Input('year1', 'value'),
+    Input('year2', 'value')])
+def update_graph(year1, year2):
+    traces = []
+    for year1 in df:
+        traces.append(go.Scatter(
             x=df['#num'],
-            y=df[xaxis_name],
+            y=df[year1],
             mode='lines',
-        )],
+        ))
+    for year2 in df:
+        traces.append(go.Scatter(
+            x=df['#num'],
+            y=df[year2],
+            mode='lines',
+        ))
+    return {
+        'data': traces,
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
                 xaxis = {'title': 'Day'},
                 yaxis = {'title': 'Ice extent (km2)'},
                 hovermode='closest'
-            )
+        )
     }
 
     
