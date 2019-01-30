@@ -24,7 +24,8 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='xaxis',
             options=[{'label': i, 'value': i} for i in years],
-            placeholder='select years'
+            placeholder='select years',
+            multi=True
         )
     ])
 ])
@@ -34,21 +35,22 @@ app.layout = html.Div([
     Output('ice-extent', 'figure'),
     [Input('xaxis', 'value')])
 def update_graph(selected_year):
-    
-    return{
-        'data': [
-            go.Scatter(
-                x = df['#num'],
-                y = df[selected_year],
-                mode='lines',
-        )],
-        'layout': go.Layout(
-                title = 'Arctic Sea Ice Extent',
-                xaxis = {'title': 'Day'},
-                yaxis = {'title': 'Ice Extent in km2'},
-                hovermode='closest'
-            )
-    }
+    df_trans = df.T
+    print(df_trans)
+    # return{
+    #     'data': [
+    #         go.Scatter(
+    #             x = df.transpose(),
+    #             y = df['num'],
+    #             mode='lines',
+    #     )],
+    #     'layout': go.Layout(
+    #             title = 'Arctic Sea Ice Extent',
+    #             xaxis = {'title': 'Day'},
+    #             yaxis = {'title': 'Ice Extent in km2'},
+    #             hovermode='closest'
+    #         )
+    # }
 
 # Add the server clause:
 if __name__ == '__main__':
