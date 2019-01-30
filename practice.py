@@ -26,18 +26,18 @@ app.layout = html.Div([
                 id='year1',
                 options=[{'label': i, 'value': i} for i in years],
                 placeholder='select years',
-                value="2019")
-            ]),
+                value="2019"),
+            ],
+            style={'width': '48%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year2',
                 options=[{'label': i, 'value': i} for i in years],
                 placeholder='select years',
-                value="2019")
+                value="2019"),
+            ],
+            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),       
             ]),
-        ])
-
-    
 ])
 
 @app.callback(
@@ -46,15 +46,13 @@ app.layout = html.Div([
     Input('year2', 'value')])
 def update_graph(selected_year1, selected_year2):
     traces = []
-    # df_new = df[df[selected_year1] == selected_year1]
-    for years in df:
-        traces.append(go.Scatter(
+    traces.append(go.Scatter(
             x=df['#num'],
             y=df[selected_year1],
             mode='lines',
+            name=selected_year1
         ))
-    for years in df:
-        traces.append(go.Scatter(
+    traces.append(go.Scatter(
             x=df['#num'],
             y=df[selected_year2],
             mode='lines',
