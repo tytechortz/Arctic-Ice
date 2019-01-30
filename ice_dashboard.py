@@ -17,7 +17,6 @@ df = pd.read_sql_query("SELECT * FROM ice", cnx)
 
 years = df.columns 
 
-
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
 
@@ -25,45 +24,22 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='xaxis',
             options=[{'label': i, 'value': i} for i in years],
-            placeholder='select years',
-            # multi=True
+            placeholder='select years'
             # value='#num'
         )
-    ],
-    style={'width': '48%', 'display': 'inline-block'}),
-    
-    html.Div([
-        dcc.RadioItems(
-            id='decade',
-            options=[
-                {'label': "1980's Avg", 'value': "1980's Average"},
-                {'label': "1990's Avg", 'value': "1990's Average"},
-                {'label': "2000's Avg", 'value': "2000's Average"},
-                {'label': "2010's Avg", 'value': "2010's Average"},
-                ],
-        )
-    ],
-    style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+    ])
 ])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('xaxis', 'value'),
-    Input('decade', 'value')])
-def update_graph(xaxis_name, decade):
-    traces = []
-    traces.append(go.Scatter(
-        x=df['#num'],
-        y=df[xaxis_name],
-        mode='markers', 
-    ))
-    traces.append(go.Scatter(
-        x=df['#num'],
-        y=df[decade],
-        mode='markers',
-    ))
+    [Input('xaxis', 'value')])
+def update_graph(xaxis_name):
     return {
-        'data': traces,
+        'data': [go.Scatter(
+            x=df['#num'],
+            y=df[xaxis_name],
+            mode='markers',
+        )],
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
                 xaxis = {'title': 'Day'},
