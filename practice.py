@@ -14,6 +14,7 @@ app = dash.Dash()
 
 # Create a DataFrame from the .csv file:
 df = pd.read_sql_query("SELECT * FROM ice", cnx)
+# df = pd.read_csv('./sea_ice.csv')
 
 years = df.columns[4:]
 
@@ -24,14 +25,15 @@ app.layout = html.Div([
                 dcc.Dropdown(
                 id='year1',
                 options=[{'label': i, 'value': i} for i in years],
-                placeholder='select years'),
-                # value='#num'
+                placeholder='select years',
+                value="2019")
             ]),
             html.Div([
                 dcc.Dropdown(
                 id='year2',
                 options=[{'label': i, 'value': i} for i in years],
-                placeholder='select years'),
+                placeholder='select years',
+                value="2019")
             ]),
         ])
 
@@ -42,18 +44,19 @@ app.layout = html.Div([
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
     Input('year2', 'value')])
-def update_graph(year1, year2):
+def update_graph(selected_year1, selected_year2):
     traces = []
-    for year1 in df:
+    # df_new = df[df[selected_year1] == selected_year1]
+    for years in df:
         traces.append(go.Scatter(
             x=df['#num'],
-            y=df[year1],
+            y=df[selected_year1],
             mode='lines',
         ))
-    for year2 in df:
+    for years in df:
         traces.append(go.Scatter(
             x=df['#num'],
-            y=df[year2],
+            y=df[selected_year2],
             mode='lines',
         ))
     return {
