@@ -33,7 +33,7 @@ app.layout = html.Div([
             ),
         ]),
         html.Div([
-            html.H4('Select Years')
+            html.H2('Select Years', style={'align':'center','color':'blue'}),
         ]),
         html.Div([
             html.Div([
@@ -72,12 +72,13 @@ def update_graph(selected_year1, selected_year2, value_range):
             x=df['#num'],
             y=df[selected_year2],
             mode='lines',
+            name=selected_year2
         ))
     return {
         'data': traces,
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
-                xaxis = {'range': value_range},
+                xaxis = {'range': value_range, 'title': 'Day'},
                 yaxis = {'title': 'Ice extent (km2)'},
                 hovermode='closest',
                 )  
