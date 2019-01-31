@@ -23,6 +23,9 @@ value_range = [0, 365]
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
         html.Div([
+            html.H2('Slider to Select Day Range')
+        ]),
+        html.Div([
             dcc.RangeSlider(
                 id='ice-slider',
                 min=value_range[0],
@@ -33,7 +36,7 @@ app.layout = html.Div([
             ),
         ]),
         html.Div([
-            html.H2('Select Years', style={'align':'center','color':'blue'}),
+            html.H2('Select Years'),
         ]),
         html.Div([
             html.Div([
