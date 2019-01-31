@@ -21,6 +21,15 @@ years = df.columns[4:]
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
         html.Div([
+            dcc.RangeSlider(
+                id='ice-slider',
+                min=0,
+                max=365,
+                step=1,
+                value=[25, 340]
+            ),
+        ]),
+        html.Div([
             html.Div([
                 dcc.Dropdown(
                 id='year1',
@@ -43,8 +52,11 @@ app.layout = html.Div([
 @app.callback(
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
-    Input('year2', 'value')])
-def update_graph(selected_year1, selected_year2):
+    Input('year2', 'value'),
+    Input('ice-slider', 'min'),
+    Input('ice-slider', 'max')])
+def update_graph(selected_year1, selected_year2, min, max):
+     
     traces = []
     traces.append(go.Scatter(
             x=df['#num'],
@@ -66,6 +78,13 @@ def update_graph(selected_year1, selected_year2):
                 hovermode='closest'
         )
     }
+
+# @app.callback(
+#     Output('ice-extent', 'figure'),
+#     [Input('ice-slider', 'value')]
+# def update_graph(day_range):
+#     day_start = '{}'
+# )
 
     
 # Add the server clause:
