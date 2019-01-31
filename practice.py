@@ -29,8 +29,11 @@ app.layout = html.Div([
                 max=value_range[1],
                 step=1,
                 value=[0, 365],
-                marks={i: i for i in range(value_range[0], value_range[1]+1)}
+                # marks={i: i for i in range(value_range[0], value_range[1]+ 1)}
             ),
+        ]),
+        html.Div([
+            html.H4('Select Years')
         ]),
         html.Div([
             html.Div([
@@ -38,7 +41,7 @@ app.layout = html.Div([
                 id='year1',
                 options=[{'label': i, 'value': i} for i in years],
                 placeholder='select years',
-                value="2019"),
+                value="2018"),
             ],
             style={'width': '48%', 'display': 'inline-block'}),
             html.Div([
