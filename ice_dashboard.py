@@ -21,6 +21,8 @@ years = df.columns[4:]
 value_range = [0, 365]
 
 app.layout = html.Div([
+    html.H1(children='Arctic Sea Ice Extent'),
+    html.H4(children='1978-Present with Decade Averages'),
     dcc.Graph(id='ice-extent'),
         html.Div([
             html.H2('Slider to Select Day Range')
