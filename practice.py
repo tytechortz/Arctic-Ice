@@ -13,20 +13,23 @@ cnx = sqlite3.connect('sea-ice.db')
 app = dash.Dash()
 
 # Create a DataFrame from the .csv file:
-df = pd.read_sql_query("SELECT * FROM ice", cnx)
-# df = pd.read_csv('./sea_ice.csv')
+# df = pd.read_sql_query("SELECT * FROM ice", cnx)
+df = pd.read_csv('./sea_ice.csv')
 
 years = df.columns[4:]
+
+value_range = [0, 365]
 
 app.layout = html.Div([
     dcc.Graph(id='ice-extent'),
         html.Div([
             dcc.RangeSlider(
                 id='ice-slider',
-                min=0,
-                max=365,
+                min=value_range[0],
+                max=value_range[1],
                 step=1,
-                value=[25, 340]
+                value=[0, 365],
+                marks={i: i for i in range(value_range[0], value_range[1]+1)}
             ),
         ]),
         html.Div([
@@ -53,10 +56,8 @@ app.layout = html.Div([
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
     Input('year2', 'value'),
-    Input('ice-slider', 'min'),
-    Input('ice-slider', 'max')])
-def update_graph(selected_year1, selected_year2, min, max):
-     
+    Input('ice-slider', 'value')])
+def update_graph(selected_year1, selected_year2, value_range):
     traces = []
     traces.append(go.Scatter(
             x=df['#num'],
@@ -73,18 +74,12 @@ def update_graph(selected_year1, selected_year2, min, max):
         'data': traces,
         'layout': go.Layout(
                 title = 'Arctic Sea Ice Extent',
-                xaxis = {'title': 'Day'},
+                xaxis = {'range': value_range},
                 yaxis = {'title': 'Ice extent (km2)'},
-                hovermode='closest'
-        )
+                hovermode='closest',
+                )  
     }
 
-# @app.callback(
-#     Output('ice-extent', 'figure'),
-#     [Input('ice-slider', 'value')]
-# def update_graph(day_range):
-#     day_start = '{}'
-# )
 
     
 # Add the server clause:
