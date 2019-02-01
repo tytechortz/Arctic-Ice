@@ -16,7 +16,7 @@ app = dash.Dash()
 df = pd.read_sql_query("SELECT * FROM ice", cnx)
 # df = pd.read_csv('./sea_ice.csv')
 
-years = df.columns[4:]
+years = df.columns[8:]
 
 value_range = [0, 365]
 
@@ -29,7 +29,7 @@ app.layout = html.Div([
     ),
     html.Div(
         children=html.Div(
-             html.H4(children='1978-Present with Decade Averages')
+             html.H4(children='1988-Present')
         )
     ),
     dcc.Graph(id='ice-extent'),
@@ -67,14 +67,32 @@ app.layout = html.Div([
             ],
             style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),       
             ]),
+
+        html.Div([
+            html.H2('Select Decade Average'),
+        ]),
+
+        dcc.RadioItems(
+            id='decade-avg',
+            options=[
+                {'label': "1980's Average", 'value': "1980's Average"},
+                {'label': "1990's Average", 'value': "1990's Average"},
+                {'label': "2000's Average", 'value': "2000's Average"},
+                {'label': "2010's Average", 'value': "2010's Average"}
+            ],
+            value="1980's Average",
+            # labelStyle={'display': 'inline-block'},
+            style={'margin': '0 auto', 'text-align': 'center'}
+        )
 ])
 
 @app.callback(
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
     Input('year2', 'value'),
-    Input('ice-slider', 'value')])
-def update_graph(selected_year1, selected_year2, value_range):
+    Input('ice-slider', 'value'),
+    Input('decade-avg', 'value')])
+def update_graph(selected_year1, selected_year2, value_range, decade):
     traces = []
     traces.append(go.Scatter(
             x=df['#num'],
@@ -88,6 +106,12 @@ def update_graph(selected_year1, selected_year2, value_range):
             mode='lines',
             name=selected_year2
         ))
+    traces.append(go.Scatter(
+            x=df['#num'],
+            y=df[decade],
+            mode='lines',
+            name=decade
+    ))
     return {
         'data': traces,
         'layout': go.Layout(
