@@ -16,7 +16,7 @@ app = dash.Dash()
 df = pd.read_sql_query("SELECT * FROM ice", cnx)
 # df = pd.read_csv('./sea_ice.csv')
 
-years = df.columns[8:]
+years = df.columns[18:]
 
 value_range = [0, 365]
 
