@@ -29,13 +29,10 @@ app.layout = html.Div([
     ),
     html.Div(
         children=html.Div(
-             html.H4(children='1988-Present')
+             html.H3(children='1988-Present')
         )
     ),
     dcc.Graph(id='ice-extent'),
-        html.Div([
-            html.H2('Slider to Select Day Range')
-        ]),
         html.Div([
             dcc.RangeSlider(
                 id='ice-slider',
@@ -45,6 +42,9 @@ app.layout = html.Div([
                 value=[0, 365],
                 # marks={i: i for i in range(value_range[0], value_range[1]+ 1)}
             ),
+            html.Div([
+            html.H2('Slider to Select Day Range')
+        ]),
         ]),
         html.Div([
             html.H2('Select Years'),

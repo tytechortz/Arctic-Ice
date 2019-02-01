@@ -1,12 +1,11 @@
 body {
     font-family: sans-serif;
+    background-color: lightgray
 }
 h1, h2, h3, h4, h5, h6 {
     color: dodgerblue;
     text-align: center
 }
 
-.background {
-    background-image: url(./polarbear.jpg)
-}
+
 
