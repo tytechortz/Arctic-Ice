@@ -32,7 +32,8 @@ app.layout = html.Div([
              html.H3(children='1988-Present')
         )
     ),
-    dcc.Graph(id='ice-extent'),
+    dcc.Graph(
+        id='ice-extent'),
         html.Div([
             dcc.RangeSlider(
                 id='ice-slider',
@@ -115,6 +116,7 @@ def update_graph(selected_year1, selected_year2, value_range, decade):
     return {
         'data': traces,
         'layout': go.Layout(
+                height = 800,
                 title = 'Arctic Sea Ice Extent',
                 xaxis = {'range': value_range, 'title': 'Day'},
                 yaxis = {'title': 'Ice extent (km2)'},
