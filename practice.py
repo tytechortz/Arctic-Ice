@@ -13,8 +13,8 @@ cnx = sqlite3.connect('sea-ice.db')
 app = dash.Dash()
 
 # Create a DataFrame from the .csv file:
-# df = pd.read_sql_query("SELECT * FROM ice", cnx)
-df = pd.read_csv('./sea_ice.csv')
+df = pd.read_sql_query("SELECT * FROM ice", cnx)
+# df = pd.read_csv('./sea_ice.csv')
 
 years = df.columns[4:]
 
