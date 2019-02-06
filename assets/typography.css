@@ -11,5 +11,39 @@ h1, h2, h3, h4, h5, h6 {
     background-image: url(./polarbear.jpg);
 }
 
+.rc-slider-handle {
+    width: 30px;
+    height: 30px;
+    background-color: red
+}
 
+.rc-slider-track {
+    height: 25px;
+    background-color: dodgerblue
+}
 
+.rc-slider-rail {
+    background-color: blue;
+    height: 25px;
+    width: 90%
+}
+
+/* .rc-slider {
+    width: 620px;
+    position: center;
+} */
+
+.Select-value {
+    text-align: center;
+    background-color: dodgerblue;
+}
+
+.Select-clear {
+    color: black 
+}
+.Select-arrow {
+    color: black
+}
+.draglayer {
+    background-color: lightblue
+}

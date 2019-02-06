@@ -6,17 +6,19 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 
+# from app import app
+
 # database connection
 cnx = sqlite3.connect('sea-ice.db')
 
 # Launch the application:
-app = dash.Dash()
+app = dash.Dash(__name__)
 
 # Create a DataFrame from the .csv file:
-df = pd.read_sql_query("SELECT * FROM ice", cnx)
-# df = pd.read_csv('./sea_ice.csv')
+# df = pd.read_sql_query("SELECT * FROM ice", cnx)
+df = pd.read_csv('./sea_ice.csv')
 
-years = df.columns[18:]
+years = df.columns[8:]
 
 value_range = [0, 365]
 
@@ -56,17 +58,33 @@ app.layout = html.Div([
                 id='year1',
                 options=[{'label': i, 'value': i} for i in years],
                 placeholder='select years',
-                value="2018"),
+                value="2012"),
             ],
-            style={'width': '48%', 'display': 'inline-block'}),
+            style={'width': '25%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year2',
                 options=[{'label': i, 'value': i} for i in years],
                 placeholder='select years',
+                value="2016"),
+            ],
+            style={'width': '25%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year3',
+                options=[{'label': i, 'value': i} for i in years],
+                placeholder='select years',
+                value="2018"),
+            ],
+            style={'width': '25%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year4',
+                options=[{'label': i, 'value': i} for i in years],
+                placeholder='select years',
                 value="2019"),
             ],
-            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),       
+            style={'width': '25%', 'float': 'right', 'display': 'inline-block'}),        
             ]),
 
         html.Div([
@@ -91,9 +109,11 @@ app.layout = html.Div([
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
     Input('year2', 'value'),
+    Input('year3', 'value'),
+    Input('year4', 'value'),
     Input('ice-slider', 'value'),
     Input('decade-avg', 'value')])
-def update_graph(selected_year1, selected_year2, value_range, decade):
+def update_graph(selected_year1, selected_year2, selected_year3, selected_year4, value_range, decade):
     traces = []
     traces.append(go.Scatter(
             x=df['#num'],
@@ -106,6 +126,18 @@ def update_graph(selected_year1, selected_year2, value_range, decade):
             y=df[selected_year2],
             mode='lines',
             name=selected_year2
+        ))
+    traces.append(go.Scatter(
+            x=df['#num'],
+            y=df[selected_year3],
+            mode='lines',
+            name=selected_year3
+        ))
+    traces.append(go.Scatter(
+            x=df['#num'],
+            y=df[selected_year4],
+            mode='lines',
+            name=selected_year4
         ))
     traces.append(go.Scatter(
             x=df['#num'],
