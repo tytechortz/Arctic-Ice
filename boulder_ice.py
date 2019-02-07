@@ -107,7 +107,7 @@ def update_figure(selected_year1,selected_year2,selected_year3,selected_year4):
     for year in selected_years:
         df2=df[(df['yyyyddd'].dt.year == int(year))]
         traces.append(go.Scatter(
-            x=df2['yyyyddd'],
+            # x=df2['yyyyddd'],
             y=df2[' (0) Northern_Hemisphere'],
             mode='lines',
             name=year
