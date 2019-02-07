@@ -15,6 +15,7 @@ df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allye
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 
+value_range = [0, 365]
 
 year_options = []
 for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
@@ -22,31 +23,91 @@ for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
 
 
 app.layout = html.Div([
-    html.Div([
-        html.H1('Arctic Sea Ice Extent in km2', style={'align': 'center', 'color': 'blue'}),
-        html.H3('Data from:', style={'align': 'center', 'color': 'blue'}),
-        dcc.Graph(id='ice-extent'),
-    html.Div([
-        dcc.Dropdown(id='year1',options=year_options,value=2019)
-    ],
-    style={'width': '48%', 'display': 'inline-block'}),
+    html.Div(
+        className="app-header",
+        children=[
+            html.Div('Arctic Sea Ice Extent', className="app-header--title"),
+        ]
+    ),
+    html.Div(
+        children=html.Div(
+             html.H3(children='1988-Present')
+        )
+    ),
+    dcc.Graph(
+        id='ice-extent'),
+        html.Div([
+            dcc.RangeSlider(
+                id='ice-slider',
+                min=value_range[0],
+                max=value_range[1],
+                step=1,
+                value=[0, 365],
+                # marks={i: i for i in range(value_range[0], value_range[1]+ 1)}
+            ),
+            html.Div([
+            html.H2('Slider to Select Day Range')
+        ]),
+        ]),
+        html.Div([
+            html.H2('Select Years'),
+        ]),
+        html.Div([
+            html.Div([
+                dcc.Dropdown(
+                id='year1',
+                options=[year_options],
+                placeholder='select years',
+                value="2012"),
+            ],
+            style={'width': '25%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year2',
+                options=[{'label': i, 'value': i} for i in year_options],
+                placeholder='select years',
+                value="2016"),
+            ],
+            style={'width': '25%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year3',
+                options=[{'label': i, 'value': i} for i in year_options],
+                placeholder='select years',
+                value="2018"),
+            ],
+            style={'width': '25%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year4',
+                options=[{'label': i, 'value': i} for i in year_options],
+                placeholder='select years',
+                value="2019"),
+            ],
+            style={'width': '25%', 'float': 'right', 'display': 'inline-block'}),        
+            ]),
 
-    ])
-]) 
+        html.Div([
+            html.H2('Select Decade Average'),
+        ]),
+])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('year1', 'value')])
-def update_figure(selected_year1):
+    [Input('year1', 'value'),
+    Input('year2', 'value'),
+    Input('year3', 'value'),
+    Input('year4', 'value')])
+def update_figure(selected_year1,selected_year2,selected_year3,selected_year4):
     traces = []
     int(selected_year1)
     # print(type(selected_year1))
     df2=df[(df['yyyyddd'].dt.year == int(selected_year1))]
     traces.append(go.Scatter(
-            x=df2.index,
+            x=df2['yyyyddd'],
             y=df2[' (0) Northern_Hemisphere'],
             mode='lines',
-            name=selected_year1
+            # name=selected_year1
         ))
     return {
         'data': traces,
