@@ -58,33 +58,41 @@ app.layout = html.Div([
                 id='year1',
                 options=[year_options],
                 placeholder='select years',
-                value="2012"),
+                value="2007"),
             ],
-            style={'width': '25%', 'display': 'inline-block'}),
+            style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year2',
                 options=[year_options],
                 placeholder='select years',
-                value="2016"),
+                value="2012"),
             ],
-            style={'width': '25%', 'display': 'inline-block'}),
+            style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year3',
                 options=[year_options],
                 placeholder='select years',
-                value="2018"),
+                value="2016"),
             ],
-            style={'width': '25%', 'display': 'inline-block'}),
+            style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year4',
                 options=[year_options],
                 placeholder='select years',
+                value="2018"),
+            ],
+            style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),
+            html.Div([
+                dcc.Dropdown(
+                id='year5',
+                options=[year_options],
+                placeholder='select years',
                 value="2019"),
             ],
-            style={'width': '25%', 'float': 'right', 'display': 'inline-block'}),        
+            style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),       
             ]),
 
         html.Div([
@@ -98,10 +106,11 @@ app.layout = html.Div([
     Input('year2', 'value'),
     Input('year3', 'value'),
     Input('year4', 'value'),
+    Input('year5', 'value'),
     Input('ice-slider', 'value')])
-def update_figure(selected_year1,selected_year2,selected_year3,selected_year4, value_range):
+def update_figure(selected_year1,selected_year2,selected_year3,selected_year4,selected_year5, value_range):
     traces = []
-    selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
+    selected_years = [selected_year1,selected_year2,selected_year3,selected_year4,selected_year5]
     print(selected_years)
     # int(selected_year1)
     # print(type(selected_year1))
