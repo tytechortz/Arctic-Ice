@@ -64,7 +64,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                 id='year2',
-                options=[{'label': i, 'value': i} for i in year_options],
+                options=[year_options],
                 placeholder='select years',
                 value="2016"),
             ],
@@ -72,7 +72,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                 id='year3',
-                options=[{'label': i, 'value': i} for i in year_options],
+                options=[year_options],
                 placeholder='select years',
                 value="2018"),
             ],
@@ -80,7 +80,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                 id='year4',
-                options=[{'label': i, 'value': i} for i in year_options],
+                options=[year_options],
                 placeholder='select years',
                 value="2019"),
             ],
@@ -100,14 +100,17 @@ app.layout = html.Div([
     Input('year4', 'value')])
 def update_figure(selected_year1,selected_year2,selected_year3,selected_year4):
     traces = []
-    int(selected_year1)
+    selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
+    print(selected_years)
+    # int(selected_year1)
     # print(type(selected_year1))
-    df2=df[(df['yyyyddd'].dt.year == int(selected_year1))]
-    traces.append(go.Scatter(
+    for year in selected_years:
+        df2=df[(df['yyyyddd'].dt.year == int(year))]
+        traces.append(go.Scatter(
             x=df2['yyyyddd'],
             y=df2[' (0) Northern_Hemisphere'],
             mode='lines',
-            # name=selected_year1
+            name=year
         ))
     return {
         'data': traces,
