@@ -97,8 +97,9 @@ app.layout = html.Div([
     [Input('year1', 'value'),
     Input('year2', 'value'),
     Input('year3', 'value'),
-    Input('year4', 'value')])
-def update_figure(selected_year1,selected_year2,selected_year3,selected_year4):
+    Input('year4', 'value'),
+    Input('ice-slider', 'value')])
+def update_figure(selected_year1,selected_year2,selected_year3,selected_year4, value_range):
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     print(selected_years)
@@ -117,7 +118,7 @@ def update_figure(selected_year1,selected_year2,selected_year3,selected_year4):
         'layout': go.Layout(
                 height = 800,
                 title = 'Arctic Sea Ice Extent',
-                xaxis = {'title': 'Day'},
+                xaxis = {'title': 'Day', 'range': value_range},
                 yaxis = {'title': 'Ice extent (km2)'},
                 hovermode='closest',
                 )  
