@@ -9,6 +9,8 @@ import datetime as dt
 
 app = dash.Dash(__name__)
 
+
+
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
@@ -38,21 +40,20 @@ app.layout = html.Div([
 def update_figure(selected_year1):
     traces = []
     int(selected_year1)
-    print(type(selected_year1))
+    # print(type(selected_year1))
     df2=df[(df['yyyyddd'].dt.year == int(selected_year1))]
-    print(df2[' (0) Northern_Hemisphere'])
-    # traces.append(go.Scatter(
-    #         x=
-    #         y=
-    #         mode='lines',
-    #         name=selected_year1
-    #     ))
+    traces.append(go.Scatter(
+            x=df2.index,
+            y=df2[' (0) Northern_Hemisphere'],
+            mode='lines',
+            name=selected_year1
+        ))
     return {
         'data': traces,
         'layout': go.Layout(
                 height = 800,
                 title = 'Arctic Sea Ice Extent',
-                xaxis = {'range': [0,365], 'title': 'Day'},
+                xaxis = {'title': 'Day'},
                 yaxis = {'title': 'Ice extent (km2)'},
                 hovermode='closest',
                 )  
