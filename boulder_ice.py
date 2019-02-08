@@ -10,6 +10,7 @@ import datetime as dt
 app = dash.Dash(__name__)
 
 
+pd.options.display.float_format = '{:,}'.format
 
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
@@ -103,11 +104,11 @@ app.layout = html.Div([
             ]),
 
     html.Div([
-            html.H2("Today's Value: {} km2".format(today_value)),
+            html.H2("Today's Value: {:,.1f} km2".format(today_value)),
         ]),
 
      html.Div([
-            html.H2("24 Hour Change: {} km2".format(daily_difference)),
+            html.H2("24 Hour Change: {:,.1f} km2".format(daily_difference)),
         ]),   
 
     html.Div([
@@ -154,4 +155,4 @@ def update_figure(selected_year1,selected_year2,selected_year3,selected_year4,se
     }
 
 if __name__ == '__main__':
-    app.run_server()   
+    app.run_server(port=8124)   
