@@ -21,6 +21,12 @@ year_options = []
 for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
+today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
+daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
+record_low = df[' (0) Northern_Hemisphere'].min(),
+record_difference= df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].min(),
+
+
 
 app.layout = html.Div([
     html.Div(
@@ -31,7 +37,12 @@ app.layout = html.Div([
     ),
     html.Div(
         children=html.Div(
-             html.H3(children='1988-Present')
+             html.H3(children='1988-Present'),
+        )
+    ),
+    html.Div(
+        children=html.Div(
+             html.H3(children='Data From National Snow and Ice Data Center'),
         )
     ),
     dcc.Graph(
@@ -56,48 +67,60 @@ app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                 id='year1',
-                options=[year_options],
-                placeholder='select years',
+                options=year_options,
                 value="2007"),
             ],
             style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year2',
-                options=[year_options],
-                placeholder='select years',
+                options=year_options,
                 value="2012"),
             ],
             style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year3',
-                options=[year_options],
-                placeholder='select years',
+                options=year_options,
                 value="2016"),
             ],
             style={'width': '20%', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year4',
-                options=[year_options],
-                placeholder='select years',
+                options=year_options,
                 value="2018"),
             ],
             style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),
             html.Div([
                 dcc.Dropdown(
                 id='year5',
-                options=[year_options],
-                placeholder='select years',
+                options=year_options,
+
                 value="2019"),
             ],
             style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),       
             ]),
 
-        html.Div([
-            html.H2('Select Decade Average'),
+    html.Div([
+            html.H2("Today's Value: {} km2".format(today_value)),
         ]),
+
+     html.Div([
+            html.H2("24 Hour Change: {} km2".format(daily_difference)),
+        ]),   
+
+    html.Div([
+            html.H2('Low Minimum: {} km2'.format(record_low)),
+        ]),
+    html.Div([
+            html.H2('Difference From Minimum: {} km2'.format(record_difference)),
+        ]),
+
+
+
+        
+
 ])
 
 @app.callback(
@@ -111,9 +134,6 @@ app.layout = html.Div([
 def update_figure(selected_year1,selected_year2,selected_year3,selected_year4,selected_year5, value_range):
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4,selected_year5]
-    print(selected_years)
-    # int(selected_year1)
-    # print(type(selected_year1))
     for year in selected_years:
         df2=df[(df['yyyyddd'].dt.year == int(year))]
         traces.append(go.Scatter(
