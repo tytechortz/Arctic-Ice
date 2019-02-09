@@ -38,7 +38,7 @@ df2.set_index('yyyyddd', inplace=True)
 
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-print(annual_maximums)
+print(annual_maximums.sort_values(ascending=False))
 
 
 app.layout = html.Div([
@@ -129,7 +129,7 @@ app.layout = html.Div([
     html.Div([
             html.H2('Difference From Minimum: {:,.1f} km2'.format(record_low_difference)),
         ]),  
-    html.Ul([html.Li(x) for x in annual_maximums])   
+    html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)])   
 ])
 
 
