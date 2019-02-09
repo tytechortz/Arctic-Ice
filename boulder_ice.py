@@ -6,6 +6,7 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 import datetime as dt 
+import dash_table
 
 app = dash.Dash(__name__)
 
@@ -15,26 +16,29 @@ pd.options.display.float_format = '{:,}'.format
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
-print(list(df))
+
 value_range = [0, 365]
 
 year_options = []
 for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
-df2=df[(df['yyyyddd'].dt.year == 2017)]
-print(df2[' (0) Northern_Hemisphere'])
+# df2=df[(df['yyyyddd'].dt.year == 2017)]
+
 
 today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
 daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
 record_low = df[' (0) Northern_Hemisphere'].min(),
-print(record_low[0])
-print(type(record_low))
 df[' (0) Northern_Hemisphere'].iloc[-1]
-print(today_value)
-print(type(today_value))
 record_low_difference = today_value - record_low[0]
-print(record_low_difference)
+
+df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
+df2.set_index('yyyyddd', inplace=True)
+
+
+annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
+print(annual_maximums)
 
 
 app.layout = html.Div([
@@ -120,18 +124,15 @@ app.layout = html.Div([
         ]),   
 
     html.Div([
-            html.H2('Low Minimum: {:,.1f} km2'.format(record_low[0])),
+            html.H2('Record Minimum: {:,.1f} km2'.format(record_low[0])),
         ]),
     html.Div([
             html.H2('Difference From Minimum: {:,.1f} km2'.format(record_low_difference)),
-        ]),
-        
-
-
-
-        
-
+        ]),  
+    html.Ul([html.Li(x) for x in annual_maximums])   
 ])
+
+
 
 @app.callback(
     Output('ice-extent', 'figure'),

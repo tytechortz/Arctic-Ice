@@ -47,3 +47,8 @@ h1, h2, h3, h4, h5, h6 {
 .draglayer {
     background-color: lightblue
 }
+
+Li {
+    color: dodgerblue;
+    font-size: 20px
+}
