@@ -129,10 +129,11 @@ app.layout = html.Div([
     html.Div([
             html.H2('Difference From Minimum: {:,.1f} km2'.format(record_low_difference)),
         ]),  
-    html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)])   
+      
 ])
 
 
+html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)]) 
 
 @app.callback(
     Output('ice-extent', 'figure'),

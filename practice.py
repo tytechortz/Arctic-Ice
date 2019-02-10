@@ -6,19 +6,33 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 import datetime as dt 
+import dash_table
 
-df=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
-df.set_index('yyyyddd', inplace=True)
 
-print(df.head())
+df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
+df2.set_index('yyyyddd', inplace=True)
 
-annual_maximums = df[' (0) Northern_Hemisphere'].loc[df.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-print(annual_maximums)
+
+
+
+df3 = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
+print(df3.sort_values(axis=0, ascending=False))
+# sms = df2.sort_values(axis=0, ascending=False)
+
+# print(sms)
+
+# app = dash.Dash(__name__)
+
+# app.layout = html.Div([
+#      html.Ol(
+#         html.Li(df2(index, value))
+#     ),
+# ])
 
 
 
     
-# Add the server clause:
+
 # if __name__ == '__main__':
-#     app.run_server()
+#     app.run_server(debug=True, threaded=True,port=8124)
