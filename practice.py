@@ -18,9 +18,9 @@ df2.set_index('yyyyddd', inplace=True)
 
 df3 = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 print(df3.sort_values(axis=0, ascending=False))
-# sms = df2.sort_values(axis=0, ascending=False)
+sms = df3.sort_values(axis=0, ascending=False)
 
-# print(sms)
+print(sms)
 
 # app = dash.Dash(__name__)
 

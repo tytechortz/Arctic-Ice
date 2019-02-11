@@ -35,10 +35,12 @@ record_low_difference = today_value - record_low[0]
 df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
 df2.set_index('yyyyddd', inplace=True)
+df3 = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
+df3.sort_values(axis=0, ascending=False)
 
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-print(annual_maximums.sort_values(ascending=False))
+
 
 
 app.layout = html.Div([
