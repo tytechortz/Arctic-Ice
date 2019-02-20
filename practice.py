@@ -39,9 +39,12 @@ for YEAR in df.index.year.unique():
 
 today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
 daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
-record_low = df[' (0) Northern_Hemisphere'].min(),
+record_min = df[' (0) Northern_Hemisphere'].min(),
 df[' (0) Northern_Hemisphere'].iloc[-1]
-record_low_difference = today_value - record_low[0]
+record_min_difference = today_value - record_min[0]
+record_max = df[' (0) Northern_Hemisphere'].max(),
+record_max_difference = today_value - record_max[0]
+
 
 df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
@@ -147,25 +150,42 @@ body = html.Div([
                 style={'height':40, 'align':'end'} 
             ), 
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Record Minimum: {:,.1f} km2'.format(record_min[0])),
+                ]),
+                style={'height':40, 'align':'end'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Difference From Minimum: {:,.1f} km2'.format(record_min_difference)),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Record Maximum: {:,.1f} km2'.format(record_max[0])),
+                ]),
+                style={'height':40, 'align':'end'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Difference From Maximum: {:,.1f} km2'.format(record_max_difference)),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ), 
+        ]),
     ]),
 ])
 
 
-
-#      html.Div([
-#             html.H2("24 Hour Change: {:,.1f} km2".format(daily_difference)),
-#         ]),   
-
-#     html.Div([
-#             html.H2('Record Minimum: {:,.1f} km2'.format(record_low[0])),
-#         ]),
-#     html.Div([
-#             html.H2('Difference From Minimum: {:,.1f} km2'.format(record_low_difference)),
-#         ]),
-
-#     html.Div([
-
-#     ])
       
 
 
