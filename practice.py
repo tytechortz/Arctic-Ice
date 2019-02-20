@@ -92,7 +92,7 @@ body = html.Div([
                 dbc.Col(
                     dcc.Dropdown(id='year1',options=year_options,value="2007"
                     ), 
-                    width={'size':2, 'offset':3}
+                    width={'size':2, 'offset':2}
                 ),
                 dbc.Col(
                     dcc.Dropdown(id='year2',options=year_options,value="2012"
@@ -100,89 +100,37 @@ body = html.Div([
                     width={'size':2} 
                 ),
                 dbc.Col(
-                    dcc.Dropdown(id='year3',options=year_options,value="2019"
+                    dcc.Dropdown(id='year3',options=year_options,value="2016"
+                    ),
+                    width={'size':2} 
+                ),
+                dbc.Col(
+                    dcc.Dropdown(id='year4',options=year_options,value="2019"
                     ),
                     width={'size':2} 
                 ),
             ],
         ),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                ]),
+                style={'height':25, 'align':'end'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2("Today's Value: {:,.1f} km2".format(today_value)),
+                ]),
+                style={'height':30, 'align':'end'} 
+            ), 
+        ]),
     ]),
 ])
 
 
-# app.layout = html.Div([
-#     html.Div(
-#         className="app-header",
-#         children=[
-#             html.Div('Arctic Sea Ice Extent', className="app-header--title"),
-#         ]
-#     ),
-#     html.Div(
-#         children=html.Div(
-#              html.H3(children='1988-Present'),
-#         )
-#     ),
-#     html.Div(
-#         children=html.Div(
-#              html.H3(children='Data From National Snow and Ice Data Center'),
-#         )
-#     ),
-#     dcc.Graph(
-#         id='ice-extent'),
-#         html.Div([
-#             dcc.RangeSlider(
-#                 id='ice-slider',
-#                 min=value_range[0],
-#                 max=value_range[1],
-#                 step=1,
-#                 value=[0, 365],
-#                 # marks={i: i for i in range(value_range[0], value_range[1]+ 1)}
-#             ),
-#             html.Div([
-#             html.H2('Slider to Select Day Range')
-#         ]),
-#         ]),
-#         html.Div([
-#             html.H2('Select Years'),
-#         ]),
-#         html.Div([
-#             html.Div([
-#                 dcc.Dropdown(
-#                 id='year1',
-#                 options=year_options,
-#                 value="2007"),
-#             ],
-#             style={'width': '20%', 'display': 'inline-block'}),
-#             html.Div([
-#                 dcc.Dropdown(
-#                 id='year2',
-#                 options=year_options,
-#                 value="2012"),
-#             ],
-#             style={'width': '20%', 'display': 'inline-block'}),
-#             html.Div([
-#                 dcc.Dropdown(
-#                 id='year3',
-#                 options=year_options,
-#                 value="2016"),
-#             ],
-#             style={'width': '20%', 'display': 'inline-block'}),
-#             html.Div([
-#                 dcc.Dropdown(
-#                 id='year4',
-#                 options=year_options,
-#                 value="2018"),
-#             ],
-#             style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),
-#             html.Div([
-#                 dcc.Dropdown(
-#                 id='year5',
-#                 options=year_options,
 
-#                 value="2019"),
-#             ],
-#             style={'width': '20%', 'float': 'right', 'display': 'inline-block'}),       
-#             ]),
 
 #     html.Div([
 #             html.H2("Today's Value: {:,.1f} km2".format(today_value)),
@@ -211,10 +159,11 @@ html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)])
     Output('ice-extent', 'figure'),
     [Input('year1', 'value'),
     Input('year2', 'value'),
-    Input('year3', 'value'),])
-def update_figure(selected_year1,selected_year2, selected_year3):
+    Input('year3', 'value'),
+    Input('year4', 'value'),])
+def update_figure(selected_year1,selected_year2, selected_year3, selected_year4):
     traces = []
-    selected_years = [selected_year1,selected_year2,selected_year3]
+    selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
         df2=df[(df['yyyyddd'].dt.year == int(year))]
         traces.append(go.Scatter(
