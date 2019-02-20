@@ -1,13 +1,17 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
-import datetime as dt 
-import dash_table
-
+import time
+# import datetime
+from datetime import datetime
+from pandas import Series
+from scipy import stats 
+from numpy import arange,array,ones 
 app = dash.Dash(__name__)
 
 
@@ -130,7 +134,11 @@ app.layout = html.Div([
         ]),
     html.Div([
             html.H2('Difference From Minimum: {:,.1f} km2'.format(record_low_difference)),
-        ]),  
+        ]),
+
+    html.Div([
+
+    ])
       
 ])
 
