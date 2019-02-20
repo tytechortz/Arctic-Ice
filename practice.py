@@ -23,11 +23,15 @@ pd.options.display.float_format = '{:,}'.format
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
+df['datetime']= pd.to_datetime(df['yyyyddd'])
+df = df.set_index('datetime')
+
 
 value_range = [0, 365]
 
 year_options = []
-for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
+# for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
+for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
 # df2=df[(df['yyyyddd'].dt.year == 2017)]
@@ -90,22 +94,22 @@ body = html.Div([
         dbc.Row(
             [
                 dbc.Col(
-                    dcc.Dropdown(id='year1',options=year_options,value="2007"
+                    dcc.Dropdown(id='year1',options=year_options
                     ), 
                     width={'size':2, 'offset':2}
                 ),
                 dbc.Col(
-                    dcc.Dropdown(id='year2',options=year_options,value="2012"
+                    dcc.Dropdown(id='year2',options=year_options
                     ),
                     width={'size':2} 
                 ),
                 dbc.Col(
-                    dcc.Dropdown(id='year3',options=year_options,value="2016"
+                    dcc.Dropdown(id='year3',options=year_options
                     ),
                     width={'size':2} 
                 ),
                 dbc.Col(
-                    dcc.Dropdown(id='year4',options=year_options,value="2019"
+                    dcc.Dropdown(id='year4',options=year_options
                     ),
                     width={'size':2} 
                 ),
@@ -165,10 +169,11 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
-        df2=df[(df['yyyyddd'].dt.year == int(year))]
+        df5=df[df.index.year == year]
+        print(df5[' (0) Northern_Hemisphere'])
         traces.append(go.Scatter(
             # x=df2['yyyyddd'],
-            y=df2[' (0) Northern_Hemisphere'],
+            y=df5[' (0) Northern_Hemisphere'],
             mode='lines',
             name=year
         ))
