@@ -50,7 +50,10 @@ df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyea
 df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
 df2.set_index('yyyyddd', inplace=True)
 df3 = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-df3.sort_values(axis=0, ascending=False)
+df4 = df3.sort_values(axis=0, ascending=False)
+
+
+df_min_max = df3[0]
 
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
@@ -182,6 +185,29 @@ body = html.Div([
                 style={'height':40, 'align':'start'} 
             ), 
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Record Low Maximum: {:,.1f} km2'.format(df_min_max)),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H2('Annual Maximum Rankings'),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2".format(df4[12])),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ), 
+        ]),
+        
     ]),
 ])
 
