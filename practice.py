@@ -49,7 +49,7 @@ df3.sort_values(axis=0, ascending=False)
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 
 
-body = dbc.Container([
+body = html.Div([
     dbc.Row([
         dbc.Col(
             html.Div(
@@ -70,8 +70,31 @@ body = dbc.Container([
             html.H3('Data From National Snow and Ice Data Center'),
         ),
     ]),
+    dbc.Row(
+        [
+            dbc.Col(
+                html.Div([
+                    dcc.Graph(id='ice-extent', style={'height':700}),    
+                ]),
+                width={'size':10}
+            ),
+        ],
+        justify='around'
+    ),
+    dbc.Row([
+        dbc.Col(
+            html.H2('Select Years'),
+        ),
+    ]),
+    dbc.Row(
+        [
+            dbc.Col(
+                dcc.Dropdown(id='year1',options=year_options,value="2007"
+                ),
+                width={'size':2, 'offset': 5}),
+        ],
+    ),
 ]),
-
 
 # app.layout = html.Div([
 #     html.Div(
@@ -166,22 +189,16 @@ body = dbc.Container([
 
 #     ])
       
-# ])
 
 
 html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)]) 
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('year1', 'value'),
-    Input('year2', 'value'),
-    Input('year3', 'value'),
-    Input('year4', 'value'),
-    Input('year5', 'value'),
-    Input('ice-slider', 'value')])
-def update_figure(selected_year1,selected_year2,selected_year3,selected_year4,selected_year5, value_range):
+    [Input('year1', 'value')])
+def update_figure(selected_year1):
     traces = []
-    selected_years = [selected_year1,selected_year2,selected_year3,selected_year4,selected_year5]
+    selected_years = [selected_year1]
     for year in selected_years:
         df2=df[(df['yyyyddd'].dt.year == int(year))]
         traces.append(go.Scatter(
@@ -193,7 +210,6 @@ def update_figure(selected_year1,selected_year2,selected_year3,selected_year4,se
     return {
         'data': traces,
         'layout': go.Layout(
-                height = 800,
                 title = 'Arctic Sea Ice Extent',
                 xaxis = {'title': 'Day', 'range': value_range},
                 yaxis = {'title': 'Ice extent (km2)'},

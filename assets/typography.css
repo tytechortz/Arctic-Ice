@@ -7,11 +7,11 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center
 }
 
-.ice-extent {
+/* .ice-extent {
     background-image: url(./polarbear.jpg);
-}
+} */
 
-.rc-slider-handle {
+/* .rc-slider-handle {
     width: 30px;
     height: 30px;
     background-color: red
@@ -26,13 +26,13 @@ h1, h2, h3, h4, h5, h6 {
     background-color: blue;
     height: 25px;
     width: 90%
-}
+} */
 
 /* .rc-slider {
     width: 620px;
     position: center;
 } */
-
+/* 
 .Select-value {
     text-align: center;
     background-color: dodgerblue;
@@ -51,4 +51,10 @@ h1, h2, h3, h4, h5, h6 {
 Li {
     color: dodgerblue;
     font-size: 20px
-}
+} */
+
+/* @media (min-width: 1366px) {
+    .container{
+        max-width: 1366px;
+    }
+} */
