@@ -67,28 +67,37 @@ body = html.Div([
         ]),
         dbc.Row([
             dbc.Col(
-                html.H3('1988-Present'),
+                html.Div(
+                    html.H3('2008-Present', style={'text-align': 'center'}),
+                ),
+                width={'size': 6, 'offset': 3}
             ),
         ]),
         dbc.Row([
             dbc.Col(
-                html.H3('Data From National Snow and Ice Data Center'),
+                html.Div(
+                    html.H3('Data From National Snow and Ice Data Center', style={'text-align': 'center'}),
+                ),
+                width={'size': 6, 'offset': 3}
             ),
         ]),
         dbc.Row(
             [
-                dbc.Col(
-                    html.Div([
-                        dcc.Graph(id='ice-extent', style={'height':700}),    
-                    ]),
-                    width={'size':12}
+            dbc.Col(
+                html.Div(
+                    dcc.Graph(id='ice-extent', style={'height':700}),    
                 ),
-            ],
-            justify='around'
+                width={'size':12}
+                ),
+        ],
+        justify='around'
         ),
         dbc.Row([
             dbc.Col(
-                html.H2('Select Years'),
+                html.Div(
+                    html.H2('Select Years', style={'text-align': 'center'}),
+                ),
+                width={'size': 6, 'offset': 3}
             ),
         ]),
         dbc.Row(
@@ -127,18 +136,21 @@ body = html.Div([
                 html.Div([
                     html.H2("Today's Value: {:,.1f} km2".format(today_value)),
                 ]),
-                style={'height':30, 'align':'end'} 
+                style={'height':40, 'align':'start'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                     html.H2("24 Hour Change: {:,.1f} km2".format(daily_difference)),
+                ]),
+                style={'height':40, 'align':'end'} 
             ), 
         ]),
     ]),
 ])
 
 
-
-
-#     html.Div([
-#             html.H2("Today's Value: {:,.1f} km2".format(today_value)),
-#         ]),
 
 #      html.Div([
 #             html.H2("24 Hour Change: {:,.1f} km2".format(daily_difference)),
@@ -170,7 +182,6 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
         df5=df[df.index.year == year]
-        print(df5[' (0) Northern_Hemisphere'])
         traces.append(go.Scatter(
             # x=df2['yyyyddd'],
             y=df5[' (0) Northern_Hemisphere'],
