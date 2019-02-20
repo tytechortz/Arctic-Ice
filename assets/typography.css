@@ -53,8 +53,8 @@ Li {
     font-size: 20px
 } */
 
-/* @media (min-width: 1366px) {
+@media (min-width: 1366px) {
     .container{
-        max-width: 1366px;
+        max-width: 1700px;
     }
-} */
+}

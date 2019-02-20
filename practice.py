@@ -50,51 +50,65 @@ annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(fre
 
 
 body = html.Div([
-    dbc.Row([
-        dbc.Col(
-            html.Div(
-                className="app-header",
-                children=[
-                    html.Div('Arctic Sea Ice Extent', className="app-header--title"),
-                ]
-            ),
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.H3('1988-Present'),
-        ),
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.H3('Data From National Snow and Ice Data Center'),
-        ),
-    ]),
-    dbc.Row(
-        [
+    dbc.Container([
+        dbc.Row([
             dbc.Col(
-                html.Div([
-                    dcc.Graph(id='ice-extent', style={'height':700}),    
-                ]),
-                width={'size':10}
-            ),
-        ],
-        justify='around'
-    ),
-    dbc.Row([
-        dbc.Col(
-            html.H2('Select Years'),
-        ),
-    ]),
-    dbc.Row(
-        [
-            dbc.Col(
-                dcc.Dropdown(id='year1',options=year_options,value="2007"
+                html.Div(
+                    className="app-header",
+                    children=[
+                        html.Div('Arctic Sea Ice Extent', className="app-header--title"),
+                    ]
                 ),
-                width={'size':2, 'offset': 5}),
-        ],
-    ),
-]),
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.H3('1988-Present'),
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.H3('Data From National Snow and Ice Data Center'),
+            ),
+        ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Div([
+                        dcc.Graph(id='ice-extent', style={'height':700}),    
+                    ]),
+                    width={'size':12}
+                ),
+            ],
+            justify='around'
+        ),
+        dbc.Row([
+            dbc.Col(
+                html.H2('Select Years'),
+            ),
+        ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Dropdown(id='year1',options=year_options,value="2007"
+                    ), 
+                    width={'size':2, 'offset':3}
+                ),
+                dbc.Col(
+                    dcc.Dropdown(id='year2',options=year_options,value="2012"
+                    ),
+                    width={'size':2} 
+                ),
+                dbc.Col(
+                    dcc.Dropdown(id='year3',options=year_options,value="2019"
+                    ),
+                    width={'size':2} 
+                ),
+            ],
+        ),
+    ]),
+])
+
 
 # app.layout = html.Div([
 #     html.Div(
@@ -195,10 +209,12 @@ html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('year1', 'value')])
-def update_figure(selected_year1):
+    [Input('year1', 'value'),
+    Input('year2', 'value'),
+    Input('year3', 'value'),])
+def update_figure(selected_year1,selected_year2, selected_year3):
     traces = []
-    selected_years = [selected_year1]
+    selected_years = [selected_year1,selected_year2,selected_year3]
     for year in selected_years:
         df2=df[(df['yyyyddd'].dt.year == int(year))]
         traces.append(go.Scatter(
