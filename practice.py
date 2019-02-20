@@ -24,6 +24,7 @@ df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allye
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df['datetime']= pd.to_datetime(df['yyyyddd'])
+
 df = df.set_index('datetime')
 
 
@@ -143,7 +144,7 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H2("Today's Value: {:,.1f} km2".format(today_value)),
+                    html.H2("Today's Value: {:,.1f} km2".format(df4[-1])),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),
