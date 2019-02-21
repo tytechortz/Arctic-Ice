@@ -12,6 +12,7 @@ from datetime import datetime
 from pandas import Series
 from scipy import stats 
 from numpy import arange,array,ones 
+from scipy.stats import norm
 
 
 
@@ -21,6 +22,9 @@ app.config['suppress_callback_exceptions']=True
 pd.options.display.float_format = '{:,}'.format
 
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+df10 = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+
+
 
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df['datetime']= pd.to_datetime(df['yyyyddd'])
@@ -59,9 +63,19 @@ df5 = df_min.sort_values(axis=0, ascending=False)
 df_min_max = df3[0]
 record_low_max_difference = today_value - df_min_max
 
+startyr = 2006
+presentyr = datetime.now().year
+year_count = presentyr-startyr
+
+count_row = df10.shape[0]
+days = count_row
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 
+def all_ice_fit():
+    xi = arange(0,days)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df10[" (0) Northern_Hemisphere"])
+    return (slope*xi+intercept)
 
 body = html.Div([
     dbc.Container([
@@ -354,16 +368,20 @@ body = html.Div([
                                     'mode' : 'lines + markers',
                                     'name' : 'Max Temp'
                                 },
+                                {
+                                    'x' : df.index,
+                                    'y' : all_ice_fit(),
+                                    'name' : 'trend'
+                                }
                             ],
                             'layout': go.Layout(
-                                xaxis = {'title': 'Date'},
-                                yaxis = {'title': 'Temp'},
+                                xaxis = {'title': ''},
+                                yaxis = {'title': 'Ice Extent km2'},
                                 hovermode = 'closest',
                                 height = 1000     
                             ), 
                         }
                     ),
-
                 ]),
                 width = {'size':12},
             ), 
