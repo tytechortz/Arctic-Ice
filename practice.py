@@ -341,6 +341,34 @@ body = html.Div([
                 ])
             ) 
         ]),
+        dbc.Row(
+        [
+           dbc.Col(
+                html.Div([
+                    dcc.Graph(id='all-ice',  
+                        figure = {
+                            'data': [
+                                {
+                                    'x' : df.index, 
+                                    'y' : df[' (0) Northern_Hemisphere'],
+                                    'mode' : 'lines + markers',
+                                    'name' : 'Max Temp'
+                                },
+                            ],
+                            'layout': go.Layout(
+                                xaxis = {'title': 'Date'},
+                                yaxis = {'title': 'Temp'},
+                                hovermode = 'closest',
+                                height = 1000     
+                            ), 
+                        }
+                    ),
+
+                ]),
+                width = {'size':12},
+            ), 
+        ]
+    ),
     ]),
 ])
 
@@ -376,6 +404,8 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
                 hovermode='closest',
                 )  
     }
+
+
 
 app.layout = html.Div(body)
 
