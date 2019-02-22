@@ -92,7 +92,7 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div(
-                    html.H3('2008-Present', style={'text-align': 'center'}),
+                    html.H3('2006-Present', style={'text-align': 'center'}),
                 ),
                 width={'size': 6, 'offset': 3}
             ),
@@ -186,13 +186,13 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H2('Record Maximum: {:,.1f} km2, {}'.format(record_max[0], df4.index[0].year)),
+                    html.H2('Maximum: {:,.1f} km2, {}'.format(record_max[0], df4.index[0].year)),
                 ]),
                 style={'height':40, 'align':'end'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H2('Record Low Maximum: {:,.1f} km2, {}'.format(df_min_max, df3.index[0].year)),
+                    html.H2('Low Max: {:,.1f} km2, {}'.format(df_min_max, df3.index[0].year)),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),  
@@ -214,13 +214,19 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H2('Annual Low Maximum Rankings',style={'color': 'black','font-size':40}),
+                    html.H2('Annual Maximums',style={'color': 'black','font-size':40}),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H2('Annual Minimum Rankings',style={'color': 'black','font-size':40}),
+                    html.H2('Annual Minimums',style={'color': 'black','font-size':40}),
+                ]),
+                style={'height':40, 'align':'start'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2('Value for this date',style={'color': 'black','font-size':40}),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),
@@ -229,6 +235,11 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("1- {:,.1f} km2,  {}".format(df4[13], df4.index[13].year)),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ),
             dbc.Col(
@@ -249,6 +260,11 @@ body = html.Div([
                 html.Div([
                     html.H2("2- {:,.1f} km2,  {}".format(df5[12], df5.index[12].year)),
                 ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                ])
             ) 
         ]),
         dbc.Row([
@@ -261,6 +277,11 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("3- {:,.1f} km2,  {}".format(df5[11], df5.index[11].year)),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -275,6 +296,11 @@ body = html.Div([
                 html.Div([
                     html.H2("4- {:,.1f} km2,  {}".format(df5[10], df5.index[10].year)),
                 ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                ])
             ) 
         ]),
         dbc.Row([
@@ -287,6 +313,11 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("5- {:,.1f} km2,  {}".format(df5[9], df5.index[9].year)),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -301,6 +332,11 @@ body = html.Div([
                 html.Div([
                     html.H2("6- {:,.1f} km2,  {}".format(df5[8], df5.index[8].year)),
                 ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                ])
             ) 
         ]),
         dbc.Row([
@@ -313,6 +349,11 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("7- {:,.1f} km2,  {}".format(df5[7], df5.index[7].year)),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -327,6 +368,11 @@ body = html.Div([
                 html.Div([
                     html.H2("8- {:,.1f} km2,  {}".format(df5[6], df5.index[6].year)),
                 ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                ])
             ) 
         ]),
         dbc.Row([
@@ -340,6 +386,11 @@ body = html.Div([
                 html.Div([
                     html.H2("9- {:,.1f} km2,  {}".format(df5[5], df5.index[5].year)),
                 ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                ])
             ) 
         ]),
         dbc.Row([
@@ -352,6 +403,11 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("10- {:,.1f} km2,  {}".format(df5[4], df5.index[4].year)),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ) 
         ]),
