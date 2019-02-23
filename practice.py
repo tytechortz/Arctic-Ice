@@ -72,6 +72,11 @@ days = count_row
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 
+# Rankings by day of year
+df11 = df2[' (0) Northern_Hemisphere']
+df_daily_rankings = df11[(df11.index.month == 1) & (df11.index.day == 1)]
+print(df_daily_rankings)
+
 def all_ice_fit():
     xi = arange(0,days)
     slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df10[" (0) Northern_Hemisphere"])
@@ -214,7 +219,7 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H2('Annual Maximums',style={'color': 'black','font-size':40}),
+                    html.H2('Lowest Annual Maximums',style={'color': 'black','font-size':40}),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),
@@ -226,7 +231,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2('Value for this date',style={'color': 'black','font-size':40}),
+                    html.H2('Values Current Date',style={'color': 'black','font-size':40}),
                 ]),
                 style={'height':40, 'align':'start'} 
             ),
@@ -410,6 +415,14 @@ body = html.Div([
                     html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
                 ])
             ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    html.H2('Daily Ice Extent:2006-Present', style={'text-align': 'center', 'color': 'black'}),
+                ),
+                width={'size': 6, 'offset': 3}
+            ),
         ]),
         dbc.Row(
         [
