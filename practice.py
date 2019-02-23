@@ -73,9 +73,12 @@ days = count_row
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 
 # Rankings by day of year
+current_month = datetime.now().month
+current_day = datetime.now().day
 df11 = df2[' (0) Northern_Hemisphere']
-df_daily_rankings = df11[(df11.index.month == 1) & (df11.index.day == 1)]
-print(df_daily_rankings)
+df_daily_rankings = df11[(df11.index.month == current_month) & (df11.index.day == current_day)]
+sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
+print(sorted_daily_rankings)
 
 def all_ice_fit():
     xi = arange(0,days)
