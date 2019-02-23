@@ -75,8 +75,9 @@ annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(fre
 # Rankings by day of year
 current_month = datetime.now().month
 current_day = datetime.now().day
+yesterday = current_day -1
 df11 = df2[' (0) Northern_Hemisphere']
-df_daily_rankings = df11[(df11.index.month == current_month) & (df11.index.day == current_day)]
+df_daily_rankings = df11[(df11.index.month == current_month) & (df11.index.day == yesterday)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
 # drl = daily rankings length
 drl = sorted_daily_rankings.size
@@ -272,7 +273,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], df5.index[13].year)),
+                    html.H2("2- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], sorted_daily_rankings.index[drl-2].year)),
                 ])
             ) 
         ]),
@@ -290,7 +291,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3], df5.index[13].year)),
+                    html.H2("3- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3],sorted_daily_rankings.index[drl-3].year)),
                 ])
             ) 
         ]),
@@ -308,7 +309,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], df5.index[13].year)),
+                    html.H2("4- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], sorted_daily_rankings.index[drl-4].year)),
                 ])
             ) 
         ]),
@@ -326,7 +327,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], df5.index[13].year)),
+                    html.H2("5- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], sorted_daily_rankings.index[drl-5].year)),
                 ])
             ) 
         ]),
@@ -344,7 +345,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], df5.index[13].year)),
+                    html.H2("6- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], sorted_daily_rankings.index[drl-6].year)),
                 ])
             ) 
         ]),
@@ -362,7 +363,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], df5.index[13].year)),
+                    html.H2("7- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], sorted_daily_rankings.index[drl-7].year)),
                 ])
             ) 
         ]),
@@ -380,7 +381,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], df5.index[13].year)),
+                    html.H2("8- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], sorted_daily_rankings.index[drl-8].year)),
                 ])
             ) 
         ]),
@@ -398,7 +399,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], df5.index[13].year)),
+                    html.H2("9- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], sorted_daily_rankings.index[drl-9].year)),
                 ])
             ) 
         ]),
@@ -416,7 +417,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], df5.index[13].year)),
+                    html.H2("10- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], sorted_daily_rankings.index[drl-10].year)),
                 ])
             ) 
         ]),
