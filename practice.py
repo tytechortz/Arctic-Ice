@@ -78,7 +78,8 @@ current_day = datetime.now().day
 df11 = df2[' (0) Northern_Hemisphere']
 df_daily_rankings = df11[(df11.index.month == current_month) & (df11.index.day == current_day)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
-print(sorted_daily_rankings)
+# drl = daily rankings length
+drl = sorted_daily_rankings.size
 
 def all_ice_fit():
     xi = arange(0,days)
@@ -252,7 +253,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-1], sorted_daily_rankings.index[drl-1].year)),
                 ])
             )
         ]),
@@ -271,7 +272,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -289,7 +290,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -307,7 +308,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -325,7 +326,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -343,7 +344,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -361,7 +362,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -379,7 +380,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -397,7 +398,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], df5.index[13].year)),
                 ])
             ) 
         ]),
@@ -415,7 +416,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], df5.index[13].year)),
                 ])
             ) 
         ]),
