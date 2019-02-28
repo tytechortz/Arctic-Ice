@@ -108,7 +108,7 @@ body = html.Div([
                 html.Div(
                     html.H3('2006-Present', style={'text-align': 'center'}),
                 ),
-                width={'size': 6, 'offset': 3}
+                width={'size': 8, 'offset': 2}
             ),
         ]),
         dbc.Row([
@@ -174,13 +174,15 @@ body = html.Div([
                 html.Div([
                     html.H2("Today's Value: {:,.1f} km2".format(today_value)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'start'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2('Record Minimum: {:,.1f} km2'.format(record_min[0])),
                 ]),
-                style={'height':40, 'align':'end'} 
+                width={'size':5, 'offset':1},
+                style={'height':40, 'align':'start'} 
             ), 
         ]),
         dbc.Row([
@@ -188,12 +190,14 @@ body = html.Div([
                 html.Div([
                      html.H2("24 Hour Change: {:,.1f} km2".format(daily_difference)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'end'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2('Difference: {:,.1f} km2'.format(record_min_difference)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'start'} 
             ), 
         ]),
@@ -202,12 +206,14 @@ body = html.Div([
                 html.Div([
                     html.H2('Maximum: {:,.1f} km2, {}'.format(record_max[0], df4.index[0].year)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'end'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2('Low Max: {:,.1f} km2, {}'.format(df_min_max, df3.index[0].year)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'start'} 
             ),  
         ]),
@@ -216,12 +222,14 @@ body = html.Div([
                 html.Div([
                     html.H2('Weekly Change: {:,.1f} km2'.format(weekly_change)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'start'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2('Difference: {:,.1f} km2'.format(record_low_max_difference)),
                 ]),
+                width={'size':5,'offset':1},
                 style={'height':40, 'align':'start'} 
             ), 
         ]),
