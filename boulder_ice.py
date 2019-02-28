@@ -472,19 +472,20 @@ body = html.Div([
                                     'x' : df.index, 
                                     'y' : df[' (0) Northern_Hemisphere'],
                                     'mode' : 'lines + markers',
-                                    'name' : 'Max Temp'
+                                    'name' : 'Ice'
                                 },
                                 {
                                     'x' : df.index,
                                     'y' : all_ice_fit(),
-                                    'name' : 'trend'
+                                    'name' : 'Trend'
                                 }
                             ],
                             'layout': go.Layout(
                                 xaxis = {'title': ''},
                                 yaxis = {'title': 'Ice Extent km2'},
                                 hovermode = 'closest',
-                                height = 1000     
+                                height = 1000 
+                                title = 'Arctic Sea Ice Extent'    
                             ), 
                         }
                     ),
