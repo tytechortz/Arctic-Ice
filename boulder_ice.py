@@ -244,13 +244,13 @@ body = html.Div([
                 html.Div([
                     html.H2('Annual Minimums',style={'color': 'black','font-size':40}),
                 ]),
-                style={'height':40, 'align':'start'} 
+                style={'height':40, 'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2('Values Current Date',style={'color': 'black','font-size':40}),
                 ]),
-                style={'height':40, 'align':'start'} 
+                style={'height':40, 'text-align':'center'}
             ),
         ]),
         dbc.Row([
@@ -262,12 +262,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
-                ])
+                ]),
+                style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
                     html.H2("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-1], sorted_daily_rankings.index[drl-1].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             )
         ]),
 
@@ -281,12 +283,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("2- {:,.1f} km2,  {}".format(df5[12], df5.index[12].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("2- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], sorted_daily_rankings.index[drl-2].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -299,12 +303,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("3- {:,.1f} km2,  {}".format(df5[11], df5.index[11].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("3- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3],sorted_daily_rankings.index[drl-3].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -317,12 +323,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("4- {:,.1f} km2,  {}".format(df5[10], df5.index[10].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("4- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], sorted_daily_rankings.index[drl-4].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -335,12 +343,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("5- {:,.1f} km2,  {}".format(df5[9], df5.index[9].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("5- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], sorted_daily_rankings.index[drl-5].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -353,12 +363,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("6- {:,.1f} km2,  {}".format(df5[8], df5.index[8].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("6- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], sorted_daily_rankings.index[drl-6].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -371,12 +383,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("7- {:,.1f} km2,  {}".format(df5[7], df5.index[7].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("7- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], sorted_daily_rankings.index[drl-7].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -389,12 +403,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("8- {:,.1f} km2,  {}".format(df5[6], df5.index[6].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("8- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], sorted_daily_rankings.index[drl-8].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -407,12 +423,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("9- {:,.1f} km2,  {}".format(df5[5], df5.index[5].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("9- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], sorted_daily_rankings.index[drl-9].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
@@ -425,12 +443,14 @@ body = html.Div([
             dbc.Col(
                 html.Div([
                     html.H2("10- {:,.1f} km2,  {}".format(df5[4], df5.index[4].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
                     html.H2("10- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], sorted_daily_rankings.index[drl-10].year)),
-                ])
+                ]),
+                style={'text-align':'center'}
             ) 
         ]),
         dbc.Row([
