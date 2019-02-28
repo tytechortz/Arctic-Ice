@@ -1,6 +1,6 @@
 .app-header {
-    height: 60px;
-    line-height: 60px;
+    height: 40px;
+    line-height: 40px;
     border-bottom: thin lightgrey solid;
 }
 
@@ -9,6 +9,6 @@
     padding-left: 5px;
     text-align: center;
     color: dodgerblue;
-    font-size: 50px;
+    font-size: 30px;
     text-shadow: gray 2px 2px
 }

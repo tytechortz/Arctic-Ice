@@ -1,14 +1,13 @@
 body {
     font-family: sans-serif;
     background-color: lightgray;
-    zoom: 67%;
 }
 h1, h2, h3, h4, h5, h6 {
     color: dodgerblue;
 }
 
-@media (min-width: 1266px) {
+/* @media (min-width: 1266px) {
     .container{
         max-width: 1566px;
     }
-}
+} */
