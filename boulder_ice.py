@@ -7,12 +7,12 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 import time
-# import datetime
-from datetime import datetime
+import datetime
 from pandas import Series
 from scipy import stats 
 from numpy import arange,array,ones 
 from scipy.stats import norm
+from pandas import DatetimeIndex
 
 
 
@@ -35,11 +35,11 @@ df = df.set_index('datetime')
 value_range = [0, 365]
 
 year_options = []
-# for YEAR in df['yyyyddd'].dt.strftime('%Y').unique():
+
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
-# df2=df[(df['yyyyddd'].dt.year == 2017)]
+
 
 
 today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
@@ -54,8 +54,6 @@ record_max = df[' (0) Northern_Hemisphere'].max(),
 record_max_difference = today_value - record_max[0]
 
 
-
-
 df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
 df2.set_index('yyyyddd', inplace=True)
@@ -67,24 +65,27 @@ df5 = df_min.sort_values(axis=0, ascending=False)
 df_min_max = df3[0]
 record_low_max_difference = today_value - df_min_max
 
-startyr = 2006
-presentyr = datetime.now().year
-year_count = presentyr-startyr
-
 count_row = df10.shape[0]
 days = count_row
 
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 
 # Rankings by day of year
-current_month = datetime.now().month
-current_day = datetime.now().day
-yesterday = current_day -1
+today = datetime.datetime.today()
+yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
+y_day = yesterday.strftime("%d")
+y_mon = yesterday.strftime("%m")
+y_day_int = int(y_day)
+y_mon_int = int(y_mon)
+
 df11 = df2[' (0) Northern_Hemisphere']
-df_daily_rankings = df11[(df11.index.month == current_month) & (df11.index.day == yesterday)]
+
+df_daily_rankings = df11[(df11.index.month == y_mon_int) & (df11.index.day == y_day_int)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
+print(sorted_daily_rankings)
 # drl = daily rankings length
 drl = sorted_daily_rankings.size
+print(drl)
 
 
 def all_ice_fit():
