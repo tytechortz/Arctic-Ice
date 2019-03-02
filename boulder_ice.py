@@ -39,13 +39,7 @@ year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
-
-
-
 today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
-
-print(today_value)
-
 
 week_ago_value = df[' (0) Northern_Hemisphere'].iloc[-7]
 weekly_change = today_value - week_ago_value
@@ -73,11 +67,9 @@ days = count_row
 
 
 year = datetime.datetime.now().year
-print(year)
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
 current_year_df = df[' (0) Northern_Hemisphere'][df[' (0) Northern_Hemisphere'].index.year == year]
 current_year_max = current_year_df.max()
-print(current_year_max)
 change_from_current_year_max = today_value - current_year_max
 
 # Rankings by day of year
