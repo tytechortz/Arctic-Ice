@@ -43,7 +43,10 @@ for YEAR in df.index.year.unique():
 
 
 today_value = df[' (0) Northern_Hemisphere'].iloc[-1]
+
 print(today_value)
+
+
 week_ago_value = df[' (0) Northern_Hemisphere'].iloc[-7]
 weekly_change = today_value - week_ago_value
 daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
@@ -68,7 +71,14 @@ record_low_max_difference = today_value - df_min_max
 count_row = df10.shape[0]
 days = count_row
 
+
+year = datetime.datetime.now().year
+print(year)
 annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
+current_year_df = df[' (0) Northern_Hemisphere'][df[' (0) Northern_Hemisphere'].index.year == year]
+current_year_max = current_year_df.max()
+print(current_year_max)
+change_from_current_year_max = today_value - current_year_max
 
 # Rankings by day of year
 today = datetime.datetime.today()
@@ -82,10 +92,7 @@ df11 = df2[' (0) Northern_Hemisphere']
 
 df_daily_rankings = df11[(df11.index.month == y_mon_int) & (df11.index.day == y_day_int)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
-print(sorted_daily_rankings)
-# drl = daily rankings length
 drl = sorted_daily_rankings.size
-print(drl)
 
 
 def all_ice_fit():
@@ -223,7 +230,7 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H5('Maximum: {:,.1f} km2, {}'.format(record_max[0], df4.index[0].year)),
+                    html.H5('Change From Max: {:,.1f} km2, '.format(change_from_current_year_max)),
                 ]),
                 width={'size':6},
                 style={'height':30, 'text-align':'center'} 
