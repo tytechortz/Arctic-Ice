@@ -14,72 +14,74 @@ from numpy import arange,array,ones
 from scipy.stats import norm
 from pandas import DatetimeIndex
 
-
-
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.config['suppress_callback_exceptions']=True
 
 pd.options.display.float_format = '{:,}'.format
 
-df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-df10 = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-
-
-
-df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
-df['datetime']= pd.to_datetime(df['yyyyddd'])
-
-df = df.set_index('datetime')
-
-
 value_range = [0, 365]
 
-year_options = []
 
+
+# Read data
+df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+# Format date and set indext to date
+df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
+df.set_index('yyyyddd', inplace=True)
+
+# Dropdown year selector values
+year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
-df20=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-df20['yyyyddd'] = pd.to_datetime(df20['yyyyddd'], format='%Y%j')
-df20.set_index('yyyyddd', inplace=True)
-df20_5 = df20.rolling(window=5).mean()
-print(df20_5.tail(10))
+# Change dataframe to 5 day trailing average
+df_fdta = df.rolling(window=5).mean()
+
+# Current day's value- 5 day trailing mean
+today_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-1]
+
+#  Yesterday's value-5 day trailing mean
+yesterday_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-2]
+
+#  1 week ago 5 day trailing mean
+week_ago_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-7]
 
 
-today_value = df[' (0) Northern_Hemisphere'].iloc[-5:].mean(axis=0)
-print(today_value)
-yesterday_value = df[' (0) Northern_Hemisphere'].iloc[-6:-1].mean(axis=0)
-print(yesterday_value)
-week_ago_value = df[' (0) Northern_Hemisphere'].iloc[-11:-6].mean(axis=0)
-print(week_ago_value)
 weekly_change = today_value - week_ago_value
 daily_difference = today_value - yesterday_value
-# daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
-record_min = df[' (0) Northern_Hemisphere'].min(),
-df[' (0) Northern_Hemisphere'].iloc[-1]
-record_min_difference = today_value - record_min[0]
-record_max = df[' (0) Northern_Hemisphere'].max(),
-record_max_difference = today_value - record_max[0]
+
+# Record minimum
+record_min = df_fdta[' (0) Northern_Hemisphere'].min()
+
+record_min_difference = today_value - record_min
 
 
-df2=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-df2['yyyyddd'] = pd.to_datetime(df2['yyyyddd'], format='%Y%j')
-df2.set_index('yyyyddd', inplace=True)
-df3 = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
-df4 = df3.sort_values(axis=0, ascending=False)
-df_min = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
-df5 = df_min.sort_values(axis=0, ascending=False)
+record_max = df_fdta[' (0) Northern_Hemisphere'].max()
 
-df_min_max = df3[0]
-record_low_max_difference = today_value - df_min_max
 
-count_row = df10.shape[0]
+annual_max_all = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+
+
+sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+
+
+annual_min_all = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+
+
+sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
+
+# Lowest annual max
+low_max = annual_max_all[0]
+
+
+record_low_max_difference = today_value - low_max
+
+count_row = df.shape[0]
 days = count_row
 
-
 year = datetime.datetime.now().year
-annual_maximums = df2[' (0) Northern_Hemisphere'].loc[df2.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-current_year_df = df[' (0) Northern_Hemisphere'][df[' (0) Northern_Hemisphere'].index.year == year]
+annual_maximums = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
+current_year_df = df_fdta[' (0) Northern_Hemisphere'][df_fdta[' (0) Northern_Hemisphere'].index.year == year]
 current_year_max = current_year_df.max()
 change_from_current_year_max = today_value - current_year_max
 
@@ -91,17 +93,17 @@ y_mon = yesterday.strftime("%m")
 y_day_int = int(y_day)
 y_mon_int = int(y_mon)
 
-df11 = df2[' (0) Northern_Hemisphere']
-
-df_daily_rankings = df11[(df11.index.month == y_mon_int) & (df11.index.day == y_day_int)]
+df10 = df_fdta[' (0) Northern_Hemisphere']
+df_daily_rankings = df10[(df10.index.month == y_mon_int) & (df10.index.day == y_day_int)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
 drl = sorted_daily_rankings.size
 
-
+# Linear trendline
 def all_ice_fit():
     xi = arange(0,days)
     slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df10[" (0) Northern_Hemisphere"])
     return (slope*xi+intercept)
+
 
 body = html.Div([
     dbc.Container([
@@ -139,7 +141,7 @@ body = html.Div([
                 ),
                 width={'size':10}
                 ),
-        ],
+            ],
         justify='around'
         ),
         dbc.Row([
@@ -192,7 +194,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Record Minimum: {:,.1f} km2'.format(record_min[0])),
+                    html.H5('Record Minimum: {:,.1f} km2'.format(record_min)),
                 ]),
                 width={'size':6},
                 style={'height':30, 'text-align':'left'} 
@@ -224,7 +226,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Low Max: {:,.1f} km2, {}'.format(df_min_max, df3.index[0].year)),
+                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[0].year)),
                 ]),
                 width={'size':6},
                 style={'height':30, 'text-align':'left'} 
@@ -272,14 +274,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("1- {:,.1f} km2,  {}".format(df4[13], df4.index[13].year)),
+                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_max_all[13], sorted_annual_max_all.index[13].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("1- {:,.1f} km2,  {}".format(df5[13], df5.index[13].year)),
+                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_min_all[13], sorted_annual_min_all.index[13].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
@@ -292,18 +294,17 @@ body = html.Div([
                 style={'text-align':'center'}
             )
         ]),
-
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("2- {:,.1f} km2,  {}".format(df4[12], df4.index[12].year)),
+                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_max_all[12], sorted_annual_max_all.index[12].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("2- {:,.1f} km2,  {}".format(df5[12], df5.index[12].year)),
+                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_min_all[12], sorted_annual_min_all.index[12].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -319,14 +320,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("3- {:,.1f} km2,  {}".format(df4[11], df4.index[11].year)),
+                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_max_all[11], sorted_annual_max_all.index[11].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("3- {:,.1f} km2,  {}".format(df5[11], df5.index[11].year)),
+                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_min_all[11], sorted_annual_min_all.index[11].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -342,14 +343,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("4- {:,.1f} km2,  {}".format(df4[10], df4.index[10].year)),
+                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_max_all[10], sorted_annual_max_all.index[10].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("4- {:,.1f} km2,  {}".format(df5[10], df5.index[10].year)),
+                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_min_all[10], sorted_annual_min_all.index[10].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -365,14 +366,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("5- {:,.1f} km2,  {}".format(df4[9], df4.index[9].year)),
+                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_max_all[9], sorted_annual_max_all.index[9].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("5- {:,.1f} km2,  {}".format(df5[9], df5.index[9].year)),
+                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_min_all[9], sorted_annual_min_all.index[9].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -388,14 +389,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("6- {:,.1f} km2,  {}".format(df4[8], df4.index[8].year)),
+                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_max_all[8], sorted_annual_max_all.index[8].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("6- {:,.1f} km2,  {}".format(df5[8], df5.index[8].year)),
+                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_min_all[8], sorted_annual_min_all.index[8].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -411,14 +412,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("7- {:,.1f} km2,  {}".format(df4[7], df4.index[7].year)),
+                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_max_all[7], sorted_annual_max_all.index[7].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("7- {:,.1f} km2,  {}".format(df5[7], df5.index[7].year)),
+                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_min_all[7], sorted_annual_min_all.index[7].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -434,14 +435,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("8- {:,.1f} km2,  {}".format(df4[6], df4.index[6].year)),
+                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_max_all[6], sorted_annual_max_all.index[6].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("8- {:,.1f} km2,  {}".format(df5[6], df5.index[6].year)),
+                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_min_all[6], sorted_annual_min_all.index[6].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -457,14 +458,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("9- {:,.1f} km2,  {}".format(df4[5], df4.index[5].year)),
+                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_max_all[5], sorted_annual_max_all.index[5].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("9- {:,.1f} km2,  {}".format(df5[5], df5.index[5].year)),
+                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_min_all[5], sorted_annual_min_all.index[5].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -480,14 +481,14 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H6("10- {:,.1f} km2,  {}".format(df4[4], df4.index[4].year)),
+                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_max_all[4], sorted_annual_max_all.index[4].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'} 
             ),
             dbc.Col(
                 html.Div([
-                    html.H6("10- {:,.1f} km2,  {}".format(df5[4], df5.index[4].year)),
+                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_min_all[4], sorted_annual_min_all.index[4].year)),
                 ]),
                 width={'size':4},
                 style={'text-align':'center'}
@@ -500,59 +501,8 @@ body = html.Div([
                 style={'text-align':'center'}
             ) 
         ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.H5('Daily Ice Extent: 2006-Present', style={'text-align': 'center', 'color': 'black'}),
-                ),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-        ],
-        justify='around'
-        ),
-        dbc.Row(
-        [
-           dbc.Col(
-                html.Div([
-                    dcc.Graph(id='all-ice',  
-                        figure = {
-                            'data': [
-                                {
-                                    'x' : df.index, 
-                                    'y' : df[' (0) Northern_Hemisphere'],
-                                    'mode' : 'lines + markers',
-                                    'name' : 'Ice'
-                                },
-                                {
-                                    'x' : df.index,
-                                    'y' : all_ice_fit(),
-                                    'name' : 'Trend'
-                                }
-                            ],
-                            'layout': go.Layout(
-                                xaxis = {'title': ''},
-                                yaxis = {'title': 'Ice Extent km2'},
-                                hovermode = 'closest',
-                                height = 500, 
-                                title = 'Arctic Sea Ice Extent'    
-                            ), 
-                        }
-                    ),
-                ]),
-                width = {'size':10},
-            ), 
-        ],
-        justify='around'
-        ),
-    ]),
+    ])
 ])
-
-
-      
-
-
-html.Ul([html.Li(x) for x in annual_maximums.sort_values(ascending=True)]) 
 
 @app.callback(
     Output('ice-extent', 'figure'),
@@ -564,10 +514,10 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
-        df5=df[df.index.year == year]
+        sorted_daily_values=df_fdta[df_fdta.index.year == year]
         traces.append(go.Scatter(
             # x=df2['yyyyddd'],
-            y=df5[' (0) Northern_Hemisphere'],
+            y=sorted_daily_values[' (0) Northern_Hemisphere'],
             mode='lines',
             name=year
         ))
@@ -580,8 +530,6 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
                 hovermode='closest',
                 )  
     }
-
-
 
 app.layout = html.Div(body)
 
