@@ -107,6 +107,22 @@ body = html.Div([
                 ),
             ),
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    html.H6('2006-Present', style={'text-align': 'center'}),
+                ),
+                width={'size': 8, 'offset': 2}
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    html.H6('Data From National Snow and Ice Data Center', style={'text-align': 'center'}),
+                ),
+                width={'size': 6, 'offset': 3}
+            ),
+        ]),
     ])
 ])
 
