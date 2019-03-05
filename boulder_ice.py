@@ -43,7 +43,7 @@ for YEAR in df.index.year.unique():
 today_value = df[' (0) Northern_Hemisphere'].iloc[-5:].mean(axis=0)
 print(today_value)
 
-week_ago_value = df[' (0) Northern_Hemisphere'].iloc[-11:-7].mean(axis=0)
+week_ago_value = df[' (0) Northern_Hemisphere'].iloc[-11:-6].mean(axis=0)
 print(week_ago_value)
 weekly_change = today_value - week_ago_value
 daily_difference = df[' (0) Northern_Hemisphere'].iloc[-1] - df[' (0) Northern_Hemisphere'].iloc[-2]
