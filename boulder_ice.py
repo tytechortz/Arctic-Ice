@@ -39,6 +39,12 @@ year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
+df20=pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+df20['yyyyddd'] = pd.to_datetime(df20['yyyyddd'], format='%Y%j')
+df20.set_index('yyyyddd', inplace=True)
+df20_5 = df20.rolling(window=5).mean()
+print(df20_5.tail(10))
+
 
 today_value = df[' (0) Northern_Hemisphere'].iloc[-5:].mean(axis=0)
 print(today_value)
