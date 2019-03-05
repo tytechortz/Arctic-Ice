@@ -41,7 +41,7 @@ df_fdta = df.rolling(window=5).mean()
 today_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-1]
 
 #  Yesterday's value-5 day trailing mean
-yesterday_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-1]
+yesterday_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-2]
 
 #  1 week ago 5 day trailing mean
 week_ago_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-7]
@@ -73,6 +73,7 @@ sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
 # Lowest annual max
 low_max = annual_max_all[0]
 
+
 record_low_max_difference = today_value - low_max
 
 count_row = df.shape[0]
@@ -92,7 +93,7 @@ y_mon = yesterday.strftime("%m")
 y_day_int = int(y_day)
 y_mon_int = int(y_mon)
 
-df10 = df[' (0) Northern_Hemisphere']
+df10 = df_fdta[' (0) Northern_Hemisphere']
 df_daily_rankings = df10[(df10.index.month == y_mon_int) & (df10.index.day == y_day_int)]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
 drl = sorted_daily_rankings.size
@@ -176,6 +177,330 @@ body = html.Div([
             ],
             style={'height':20}
         ),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                ]),
+                style={'height':25, 'align':'end'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H5("Today's Value: {:,.1f} km2".format(today_value)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Record Minimum: {:,.1f} km2'.format(record_min)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'left'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                     html.H5("24 Hour Change: {:,.1f} km2".format(daily_difference)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Difference: {:,.1f} km2'.format(record_min_difference)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'left'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H5('Weekly Change: {:,.1f} km2'.format(weekly_change)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[0].year)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'left'} 
+            ),  
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H5('Change From Max: {:,.1f} km2, '.format(change_from_current_year_max)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Difference: {:,.1f} km2'.format(record_low_max_difference)),
+                ]),
+                width={'size':6},
+                style={'height':30, 'text-align':'left'} 
+            ), 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H5('Lowest Annual Maximums',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Annual Minimums',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Values Current Date',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'}
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_max_all[13], sorted_annual_max_all.index[13].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_min_all[13], sorted_annual_min_all.index[13].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-1], sorted_daily_rankings.index[drl-1].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            )
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_max_all[12], sorted_annual_max_all.index[12].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_min_all[12], sorted_annual_min_all.index[12].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("2- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], sorted_daily_rankings.index[drl-2].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_max_all[11], sorted_annual_max_all.index[11].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_min_all[11], sorted_annual_min_all.index[11].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("3- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3],sorted_daily_rankings.index[drl-3].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_max_all[10], sorted_annual_max_all.index[10].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_min_all[10], sorted_annual_min_all.index[10].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("4- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], sorted_daily_rankings.index[drl-4].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_max_all[9], sorted_annual_max_all.index[9].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_min_all[9], sorted_annual_min_all.index[9].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("5- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], sorted_daily_rankings.index[drl-5].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_max_all[8], sorted_annual_max_all.index[8].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_min_all[8], sorted_annual_min_all.index[8].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("6- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], sorted_daily_rankings.index[drl-6].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_max_all[7], sorted_annual_max_all.index[7].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_min_all[7], sorted_annual_min_all.index[7].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("7- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], sorted_daily_rankings.index[drl-7].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_max_all[6], sorted_annual_max_all.index[6].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_min_all[6], sorted_annual_min_all.index[6].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("8- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], sorted_daily_rankings.index[drl-8].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_max_all[5], sorted_annual_max_all.index[5].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_min_all[5], sorted_annual_min_all.index[5].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("9- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], sorted_daily_rankings.index[drl-9].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_max_all[4], sorted_annual_max_all.index[4].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_min_all[4], sorted_annual_min_all.index[4].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6("10- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], sorted_daily_rankings.index[drl-10].year)),
+                ]),
+                width={'size':4},
+                style={'text-align':'center'}
+            ) 
+        ]),
     ])
 ])
 
@@ -189,10 +514,10 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
-        df5=df[df.index.year == year]
+        sorted_daily_values=df_fdta[df_fdta.index.year == year]
         traces.append(go.Scatter(
             # x=df2['yyyyddd'],
-            y=df5[' (0) Northern_Hemisphere'],
+            y=sorted_daily_values[' (0) Northern_Hemisphere'],
             mode='lines',
             name=year
         ))
