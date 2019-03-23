@@ -34,6 +34,11 @@ year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
+# Dropdown sea selector values
+sea_options = []
+for sea in df.columns.unique():
+    sea_options.append({'label':sea, 'value':sea})
+
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
 
@@ -138,7 +143,7 @@ body = html.Div([
         dbc.Row(
             [
                 dbc.Col(
-                    dcc.Dropdown(id='sea',options=year_options
+                    dcc.Dropdown(id='sea',options=sea_options
                     ), 
                     width={'size':4, 'offset':4},
                 ),
