@@ -7,7 +7,7 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 import time
-import datetime
+from datetime import datetime
 from pandas import Series
 from scipy import stats 
 from numpy import arange,array,ones 
@@ -21,18 +21,18 @@ pd.options.display.float_format = '{:,}'.format
 
 value_range = [0, 365]
 
-
-
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
-df.columns = ['Total Arctic Sea Ice', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
+df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
      'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
 
+count_row = df.shape[0]
+days = count_row
 
 # Dropdown year selector values
 year_options = []
@@ -47,7 +47,9 @@ for sea in df.columns.unique():
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
 
-
+startyr = 2006
+presentyr = datetime.now().year
+year_count = presentyr-startyr
 
 body = html.Div([
     dbc.Container([
@@ -220,6 +222,18 @@ body = html.Div([
                 style={'text-align':'center'}
             ),
         ]),
+        dbc.Row(
+            [
+            dbc.Col(
+                html.Div(
+                    dcc.Graph(id='all-ice-extent', style={'height':450}),    
+                ),
+                width={'size':10}
+                ),
+            ],
+        justify='around'
+        ),
+        
     ])
 
 ])
@@ -308,7 +322,7 @@ def current_ice_e(selected_sea):
     Output('max-diff', 'children'),
     [Input('sea', 'value')])
 def current_ice_f(selected_sea):
-    year = datetime.datetime.now().year
+    year = datetime.now().year
     today_value = df_fdta[selected_sea].iloc[-1]
     current_year_df = df_fdta[selected_sea][df_fdta[selected_sea].index.year == year]
     current_year_max = current_year_df.max()
@@ -325,7 +339,38 @@ def current_ice_g(selected_sea):
     record_low_max_difference = today_value - low_max
     return "Difference From Low Max: {:,.0f} km2".format(record_low_max_difference)
 
+@app.callback(
+    Output('all-ice-extent', 'figure'),
+    [Input('sea', 'value')])
+def update_figure_a(selected_sea):
+    traces = []
+    def all_ice_fit():
+        xi = arange(0,days)
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df[selected_sea])
+        return (slope*xi+intercept)
+    traces.append(go.Scatter(
+        x = df_fdta.index, 
+        y = df_fdta[selected_sea],
+        name = 'Ice'
+    )),
+    traces.append(go.Scatter(
+        x = df_fdta.index,
+        y = all_ice_fit(),
+        name = 'trend'
+    ))
+    return {
+        'data': traces,
+        'layout': go.Layout(
+                xaxis = {'title': ''},
+                yaxis = {'title': 'Ice Extent km2'},
+                hovermode = 'closest',
+                height = 500, 
+                title = '{} Ice Extent'.format(selected_sea)
+                )  
+    }
+
 app.layout = html.Div(body)
 
 if __name__ == "__main__":
     app.run_server(port=8124, debug=True)
+
