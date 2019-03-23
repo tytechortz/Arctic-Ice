@@ -30,7 +30,7 @@ df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allye
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
 df.columns = ['Total Arctic Sea Ice', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
-     'Barents Sea', 'Greenland Sea', 'Baffinn Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
+     'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
 
 
@@ -46,6 +46,8 @@ for sea in df.columns.unique():
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
+
+
 
 body = html.Div([
     dbc.Container([
@@ -154,6 +156,22 @@ body = html.Div([
                 style={'height':25, 'align':'end'} 
             ), 
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6(id='current-value')
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6(id='record-min'),
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+        ]),
     ])
 
 ])
@@ -184,6 +202,25 @@ def update_figure(selected_sea,selected_year1,selected_year2, selected_year3, se
                 hovermode='closest',
                 )  
     }
+
+@app.callback(
+    Output('current-value', 'children'),
+    [Input('sea', 'value')])
+def current_ice(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    print(today_value)
+    return "Today's Value: {:,.0f} km2".format(today_value),
+
+@app.callback(
+    Output('record-min', 'children'),
+    [Input('sea', 'value')])
+def current_ice_a(selected_sea):
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
+    record_min = df_fdta[selected_sea].min()
+    print(sorted_annual_min_all[-1])
+    return "Record Minimum: {:,.0f} km2 - {}".format(record_min, sorted_annual_min_all.index[-1].year),
+
 
 app.layout = html.Div(body)
 
