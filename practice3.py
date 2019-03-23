@@ -172,6 +172,22 @@ body = html.Div([
                 style={'text-align':'center'}
             ),
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6(id='daily-change')
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6(id='record-min-difference'),
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+        ]),
     ])
 
 ])
@@ -208,7 +224,6 @@ def update_figure(selected_sea,selected_year1,selected_year2, selected_year3, se
     [Input('sea', 'value')])
 def current_ice(selected_sea):
     today_value = df_fdta[selected_sea].iloc[-1]
-    print(today_value)
     return "Today's Value: {:,.0f} km2".format(today_value),
 
 @app.callback(
@@ -218,8 +233,28 @@ def current_ice_a(selected_sea):
     annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
     sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
     record_min = df_fdta[selected_sea].min()
-    print(sorted_annual_min_all[-1])
     return "Record Minimum: {:,.0f} km2 - {}".format(record_min, sorted_annual_min_all.index[-1].year),
+
+@app.callback(
+    Output('daily-change', 'children'),
+    [Input('sea', 'value')])
+def current_ice_b(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    yesterday_value = df_fdta[selected_sea].iloc[-2]
+    daily_change = today_value - yesterday_value
+    print(daily_change)
+    return "24 Hour Change: {:,.0f} km2".format(daily_change)
+
+@app.callback(
+    Output('record-min-difference', 'children'),
+    [Input('sea', 'value')])
+def current_ice_c(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
+    record_min = df_fdta[selected_sea].min()
+    record_min_difference = today_value - record_min
+    return "Difference From Record: {:,.0f} km2".format(record_min_difference)
 
 
 app.layout = html.Div(body)
