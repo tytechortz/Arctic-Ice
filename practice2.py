@@ -25,9 +25,14 @@ value_range = [0, 365]
 
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
+df.columns = ['Total Arctic Sea Ice', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
+     'Barents Sea', 'Greenland Sea', 'Baffinn Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
+         'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
+print(df)
 
 # Dropdown year selector values
 year_options = []
@@ -544,7 +549,6 @@ def update_figure(selected_sea,selected_year1,selected_year2, selected_year3, se
     for year in selected_years:
         sorted_daily_values=df_fdta[df_fdta.index.year == year]
         traces.append(go.Scatter(
-            # x=df2['yyyyddd'],
             y=sorted_daily_values[selected_sea],
             mode='lines',
             name=year
