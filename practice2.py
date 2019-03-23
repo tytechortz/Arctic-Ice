@@ -137,6 +137,26 @@ body = html.Div([
         ]),
         dbc.Row(
             [
+                dbc.Col(
+                    dcc.Dropdown(id='sea',options=year_options
+                    ), 
+                    width={'size':4, 'offset':4},
+                ),
+            ],
+            style={'height':30}
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Div(
+                        html.H6('', style={'text-align': 'center'}),
+                    ),
+                ),
+            ],
+            style={'height':30}
+        ),
+        dbc.Row(
+            [
             dbc.Col(
                 html.Div(
                     dcc.Graph(id='ice-extent', style={'height':450}),    
