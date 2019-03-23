@@ -533,18 +533,19 @@ body = html.Div([
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('year1', 'value'),
+    [Input('sea', 'value'),
+    Input('year1', 'value'),
     Input('year2', 'value'),
     Input('year3', 'value'),
     Input('year4', 'value'),])
-def update_figure(selected_year1,selected_year2, selected_year3, selected_year4):
+def update_figure(selected_sea,selected_year1,selected_year2, selected_year3, selected_year4):
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
         sorted_daily_values=df_fdta[df_fdta.index.year == year]
         traces.append(go.Scatter(
             # x=df2['yyyyddd'],
-            y=sorted_daily_values[' (0) Northern_Hemisphere'],
+            y=sorted_daily_values[selected_sea],
             mode='lines',
             name=year
         ))
