@@ -188,6 +188,22 @@ body = html.Div([
                 style={'text-align':'center'}
             ),
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6(id='weekly-change')
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6(id='low-max'),
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+        ]),
     ])
 
 ])
@@ -250,12 +266,28 @@ def current_ice_b(selected_sea):
     [Input('sea', 'value')])
 def current_ice_c(selected_sea):
     today_value = df_fdta[selected_sea].iloc[-1]
-    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
-    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
     record_min = df_fdta[selected_sea].min()
     record_min_difference = today_value - record_min
     return "Difference From Record: {:,.0f} km2".format(record_min_difference)
 
+@app.callback(
+    Output('weekly-change', 'children'),
+    [Input('sea', 'value')])
+def current_ice_d(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    week_ago_value = df_fdta[selected_sea].iloc[-7]
+    weekly_change = today_value - week_ago_value
+    return "Weekly Change: {:,.0f} km2".format(weekly_change)
+
+@app.callback(
+    Output('low-max', 'children'),
+    [Input('sea', 'value')])
+def current_ice_e(selected_sea):
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+    today_value = df_fdta[selected_sea].iloc[-1]
+    low_max = annual_max_all[0]
+    return "Low Max: {:,.0f} km2 - {}".format(low_max, sorted_annual_max_all.index[-1].year)
 
 app.layout = html.Div(body)
 
