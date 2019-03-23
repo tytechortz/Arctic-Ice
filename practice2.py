@@ -32,7 +32,7 @@ df.set_index('yyyyddd', inplace=True)
 df.columns = ['Total Arctic Sea Ice', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
      'Barents Sea', 'Greenland Sea', 'Baffinn Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
-print(df)
+
 
 # Dropdown year selector values
 year_options = []
