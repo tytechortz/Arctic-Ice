@@ -204,6 +204,22 @@ body = html.Div([
                 style={'text-align':'center'}
             ),
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H6(id='max-diff')
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H6(id='low-max-diff'),
+                ]),
+                width={'size':6},
+                style={'text-align':'center'}
+            ),
+        ]),
     ])
 
 ])
@@ -285,9 +301,29 @@ def current_ice_d(selected_sea):
 def current_ice_e(selected_sea):
     annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
     sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
-    today_value = df_fdta[selected_sea].iloc[-1]
     low_max = annual_max_all[0]
     return "Low Max: {:,.0f} km2 - {}".format(low_max, sorted_annual_max_all.index[-1].year)
+
+@app.callback(
+    Output('max-diff', 'children'),
+    [Input('sea', 'value')])
+def current_ice_f(selected_sea):
+    year = datetime.datetime.now().year
+    today_value = df_fdta[selected_sea].iloc[-1]
+    current_year_df = df_fdta[selected_sea][df_fdta[selected_sea].index.year == year]
+    current_year_max = current_year_df.max()
+    change_from_current_year_max = today_value - current_year_max
+    return "Change From Max: {:,.0f} km2".format(change_from_current_year_max)
+
+@app.callback(
+    Output('low-max-diff', 'children'),
+    [Input('sea', 'value')])
+def current_ice_g(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    low_max = annual_max_all[0]
+    record_low_max_difference = today_value - low_max
+    return "Difference From Low Max: {:,.0f} km2".format(record_low_max_difference)
 
 app.layout = html.Div(body)
 
