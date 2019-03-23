@@ -85,18 +85,12 @@ current_year_df = df_fdta[' (0) Northern_Hemisphere'][df_fdta[' (0) Northern_Hem
 current_year_max = current_year_df.max()
 change_from_current_year_max = today_value - current_year_max
 
-# Rankings by day of year
-today = datetime.datetime.today()
-yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
-y_day = yesterday.strftime("%d")
-y_mon = yesterday.strftime("%m")
-y_day_int = int(y_day)
-y_mon_int = int(y_mon)
-
+# Rankings by last 5 dates of data
 df10 = df_fdta[' (0) Northern_Hemisphere']
-df_daily_rankings = df10[(df10.index.month == y_mon_int) & (df10.index.day == y_day_int)]
+df_daily_rankings = df10[(df10.index.month == df.index.month[-1]) & (df10.index.day == df.index.day[-1])]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
 drl = sorted_daily_rankings.size
+
 
 # Linear trendline
 def all_ice_fit():
@@ -226,7 +220,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[0].year)),
+                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[-1].year)),
                 ]),
                 width={'size':6},
                 style={'height':30, 'text-align':'left'} 

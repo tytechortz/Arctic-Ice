@@ -21,6 +21,8 @@ pd.options.display.float_format = '{:,}'.format
 
 value_range = [0, 365]
 
+
+
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 # Format date and set indext to date
@@ -31,12 +33,6 @@ df.set_index('yyyyddd', inplace=True)
 year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
-
-# Dropdown sea selector values
-sea_options = []
-for name in df.columns:
-    sea_options.append({'label':(name), 'value':name})
-print(sea_options)
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
@@ -89,23 +85,17 @@ current_year_df = df_fdta[' (0) Northern_Hemisphere'][df_fdta[' (0) Northern_Hem
 current_year_max = current_year_df.max()
 change_from_current_year_max = today_value - current_year_max
 
-# Rankings by day of year
-today = datetime.datetime.today()
-yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
-y_day = yesterday.strftime("%d")
-y_mon = yesterday.strftime("%m")
-y_day_int = int(y_day)
-y_mon_int = int(y_mon)
-
+# Rankings by last 5 dates of data
 df10 = df_fdta[' (0) Northern_Hemisphere']
-df_daily_rankings = df10[(df10.index.month == y_mon_int) & (df10.index.day == y_day_int)]
+df_daily_rankings = df10[(df10.index.month == df.index.month[-1]) & (df10.index.day == df.index.day[-1])]
 sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
 drl = sorted_daily_rankings.size
+
 
 # Linear trendline
 def all_ice_fit():
     xi = arange(0,days)
-    slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df[" (0) Northern_Hemisphere"])
+    slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df10[" (0) Northern_Hemisphere"])
     return (slope*xi+intercept)
 
 
@@ -140,7 +130,7 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div(
-                    html.H6('MASIE 4km, 5 Day Trailing Avg', style={'text-align': 'center'}),
+                    html.H6('Select Sea', style={'text-align': 'center'}),
                 ),
                 width={'size': 6, 'offset': 3}
             ),
@@ -238,7 +228,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[0].year)),
+                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[-1].year)),
                 ]),
                 width={'size':6},
                 style={'height':30, 'text-align':'left'} 
@@ -513,95 +503,8 @@ body = html.Div([
                 style={'text-align':'center'}
             ) 
         ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.H5('Daily Ice Extent: 2006-Present', style={'text-align': 'center', 'color': 'black'}),
-                ),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-        ],
-        justify='around'
-        ),
-        dbc.Row(
-        [
-           dbc.Col(
-                html.Div([
-                    dcc.Graph(id='all-ice',  
-                        figure = {
-                            'data': [
-                                {
-                                    'x' : df_fdta.index, 
-                                    'y' : df_fdta[' (0) Northern_Hemisphere'],
-                                    'mode' : 'lines + markers',
-                                    'name' : 'Ice'
-                                },
-                                {
-                                    'x' : df_fdta.index,
-                                    'y' : all_ice_fit(),
-                                    'name' : 'Trend'
-                                }
-                            ],
-                            'layout': go.Layout(
-                                xaxis = {'title': ''},
-                                yaxis = {'title': 'Ice Extent km2'},
-                                hovermode = 'closest',
-                                height = 500, 
-                                title = 'Arctic Sea Ice Extent'    
-                            ), 
-                        }
-                    ),
-                ]),
-                width = {'size':10},
-            ), 
-        ],
-        justify='around'
-        ),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                ]),
-                style={'height':50, 'align':'end'} 
-            ), 
-        ]),
-    
-        dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.H5('Data for Selected Sea', style={'text-align': 'center', 'color': 'black'}),
-                ),
-                width={'size':4},
-                style={'text-align':'start'}
-            ),
-            dbc.Col(
-                    dcc.Dropdown(id='sea',options=sea_options[1:]), 
-                    width={'size':4},
-                ),
-        ],
-        justify='around'
-        ),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                ]),
-                style={'height':50, 'align':'end'} 
-            ), 
-        ]),
-        dbc.Row(
-            [
-            dbc.Col(
-                html.Div(
-                    dcc.Graph(id='ice-extent-by-sea', style={'height':450}),    
-                ),
-                width={'size':10}
-                ),
-            ],
-        justify='around'
-        ),
-    ]),
+    ])
 ])
-
 
 @app.callback(
     Output('ice-extent', 'figure'),
@@ -629,15 +532,6 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
                 hovermode='closest',
                 )  
     }
-
-@app.callback(
-    Output('ice-extent-by-sea', 'figure'),
-    [Input('sea', 'value')])
-def update_figure(selected_sea):
-    go.Scatter(
-        
-    )
-)
 
 app.layout = html.Div(body)
 
