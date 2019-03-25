@@ -423,9 +423,7 @@ def record_ice_table(selected_sea, max_rows=10):
     [Input('sea', 'value')])
 def record_ice_table_a(selected_sea, max_rows=10):
     annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
-    
     sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=True)
-   
     sama = pd.DataFrame({'Extent km2':sorted_annual_min_all.values,'YEAR':sorted_annual_min_all.index.year})
     sama = sama.round(0)
     return html.Table (
@@ -438,12 +436,17 @@ def record_ice_table_a(selected_sea, max_rows=10):
     Output('current-date-values', 'children'),
     [Input('sea', 'value')])
 def current_date_table(selected_sea, max_rows=10):
-    print(df.index[-1].month)
     dr = df[(df.index.month == df.index[-1].month) & (df.index.day == df.index[-1].day)]
     dr_sea = dr[selected_sea]
-    sort_dr_sea = dr_sea.sort_values(axis=0, ascending=False)
-
-    print(sort_dr_sea)
+    sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
+    sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
+    sort_dr_sea= sort_dr_sea.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sort_dr_sea.iloc[i][col]) for col in sort_dr_sea.columns
+        ]) for i in range(min(len(sort_dr_sea), max_rows))]
+    )
+   
    
 
 app.layout = html.Div(body)
