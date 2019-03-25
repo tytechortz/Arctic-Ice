@@ -322,7 +322,6 @@ def current_ice_b(selected_sea):
     today_value = df_fdta[selected_sea].iloc[-1]
     yesterday_value = df_fdta[selected_sea].iloc[-2]
     daily_change = today_value - yesterday_value
-    print(daily_change)
     return "24 Hour Change: {:,.0f} km2".format(daily_change)
 
 @app.callback(
@@ -418,17 +417,34 @@ def record_ice_table(selected_sea, max_rows=10):
             html.Td(sama.iloc[i][col]) for col in sama.columns 
             ]) for i in range(min(len(sama), max_rows))]
     )
-        
 
-# @app.callback(Output('table-container', 'children'),  
-#               [Input('rankings', 'value')])
-# def update_rankings(selected_param):
-#     if selected_param == 'acr':
-#         return generate_table(acr)
-#     elif selected_param == 'max_dt':
-#         return generate_table_maxdt(maxdt)
-#     elif selected_param == 'min_dt':
-#         return generate_table_mindt(mindt)
+@app.callback(
+    Output('annual-min-table', 'children'),
+    [Input('sea', 'value')])
+def record_ice_table_a(selected_sea, max_rows=10):
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=True)
+   
+    sama = pd.DataFrame({'Extent km2':sorted_annual_min_all.values,'YEAR':sorted_annual_min_all.index.year})
+    sama = sama.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sama.iloc[i][col]) for col in sama.columns 
+            ]) for i in range(min(len(sama), max_rows))]
+    )
+
+@app.callback(
+    Output('current-date-values', 'children'),
+    [Input('sea', 'value')])
+def current_date_table(selected_sea, max_rows=10):
+    print(df.index[-1].month)
+    dr = df[(df.index.month == df.index[-1].month) & (df.index.day == df.index[-1].day)]
+    dr_sea = dr[selected_sea]
+    sort_dr_sea = dr_sea.sort_values(axis=0, ascending=False)
+
+    print(sort_dr_sea)
+   
 
 app.layout = html.Div(body)
 

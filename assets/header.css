@@ -17,7 +17,7 @@ table {
     /* table-layout: fixed; */
     width: 100%;
     border-collapse: collapse;
-    border: 3px solid blue;
+    border: 3px solid dodgerblue;
 }
 
 thead th:nth-child(1) {
