@@ -409,16 +409,16 @@ def update_figure_a(selected_sea):
 def record_ice_table(selected_sea, max_rows=10):
     annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
     
-    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
    
-    sama = sorted_annual_max_all.to_frame()
-  
+    sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
+    sama = sama.round(0)
     return html.Table (
-        [html.Tr([html.Th(col) for col in sama.columns])] +
         [html.Tr([
             html.Td(sama.iloc[i][col]) for col in sama.columns 
             ]) for i in range(min(len(sama), max_rows))]
     )
+        
 
 # @app.callback(Output('table-container', 'children'),  
 #               [Input('rankings', 'value')])
