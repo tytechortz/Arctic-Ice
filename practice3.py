@@ -222,6 +222,40 @@ body = html.Div([
                 style={'text-align':'center'}
             ),
         ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.H5('Lowest Annual Maximums',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Annual Minimums',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'} 
+            ),
+            dbc.Col(
+                html.Div([
+                    html.H5('Values Current Date',style={'color': 'black','font-size':20}),
+                ]),
+                width={'size':4},
+                style={'height':30, 'text-align':'center'}
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div(id='annual-max-table'),
+            ),
+            dbc.Col(
+                html.Div(id='annual-min-table'),
+            ),
+            dbc.Col(
+                html.Div(id='current-date-values'),
+            ),
+        ]),
         dbc.Row(
             [
             dbc.Col(
@@ -368,6 +402,33 @@ def update_figure_a(selected_sea):
                 title = '{} Ice Extent'.format(selected_sea)
                 )  
     }
+
+@app.callback(
+    Output('annual-max-table', 'children'),
+    [Input('sea', 'value')])
+def record_ice_table(selected_sea, max_rows=10):
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+   
+    sama = sorted_annual_max_all.to_frame()
+  
+    return html.Table (
+        [html.Tr([html.Th(col) for col in sama.columns])] +
+        [html.Tr([
+            html.Td(sama.iloc[i][col]) for col in sama.columns 
+            ]) for i in range(min(len(sama), max_rows))]
+    )
+
+# @app.callback(Output('table-container', 'children'),  
+#               [Input('rankings', 'value')])
+# def update_rankings(selected_param):
+#     if selected_param == 'acr':
+#         return generate_table(acr)
+#     elif selected_param == 'max_dt':
+#         return generate_table_maxdt(maxdt)
+#     elif selected_param == 'min_dt':
+#         return generate_table_mindt(mindt)
 
 app.layout = html.Div(body)
 
