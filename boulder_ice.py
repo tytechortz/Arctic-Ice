@@ -50,6 +50,10 @@ df_fdta = df.rolling(window=5).mean()
 startyr = 2006
 presentyr = datetime.now().year
 year_count = presentyr-startyr
+presentday = datetime.now().day
+dayofyear = time.strftime("%j")
+dayofyear = int(dayofyear)
+
 
 body = html.Div([
     dbc.Container([
@@ -200,7 +204,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H6(id='low-max'),
+                    html.H6(id='daily-low-diff'),
                 ]),
                 width={'size':6},
                 style={'text-align':'center'}
@@ -216,7 +220,7 @@ body = html.Div([
             ),
             dbc.Col(
                 html.Div([
-                    html.H6(id='daily-low-diff'),
+                    html.H6(id='record-pace'),
                 ]),
                 width={'size':6},
                 style={'text-align':'center'}
@@ -343,13 +347,18 @@ def current_ice_d(selected_sea):
     return "Weekly Change: {:,.0f} km2".format(weekly_change)
 
 @app.callback(
-    Output('low-max', 'children'),
+    Output('record-pace', 'children'),
     [Input('sea', 'value')])
 def current_ice_e(selected_sea):
-    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
-    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
-    low_max = annual_max_all[0]
-    return "Low Max: {:,.0f} km2 - {}".format(low_max, sorted_annual_max_all.index[-1].year)
+    today_value = df_fdta[selected_sea].iloc[-1]
+    record_min = df_fdta[selected_sea].min()
+    days_left = 263 - dayofyear
+    # 263
+    pace = (today_value - record_min) / days_left
+    # annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    # sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+    # low_max = annual_max_all[0]
+    return "Pace for Record Low: {:,.0f} km2/day for {} days".format(pace, days_left)
 
 @app.callback(
     Output('max-diff', 'children'),
