@@ -46,6 +46,7 @@ for sea in df.columns.unique():
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
+print(df_fdta)
 
 startyr = 2006
 presentyr = datetime.now().year
@@ -436,7 +437,7 @@ def record_ice_table_a(selected_sea, max_rows=10):
     Output('current-date-values', 'children'),
     [Input('sea', 'value')])
 def current_date_table(selected_sea, max_rows=10):
-    dr = df[(df.index.month == df.index[-1].month) & (df.index.day == df.index[-1].day)]
+    dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
     dr_sea = dr[selected_sea]
     sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
     sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
@@ -447,8 +448,6 @@ def current_date_table(selected_sea, max_rows=10):
         ]) for i in range(min(len(sort_dr_sea), max_rows))]
     )
    
-   
-
 app.layout = html.Div(body)
 
 if __name__ == "__main__":

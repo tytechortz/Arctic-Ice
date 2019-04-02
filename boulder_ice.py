@@ -7,7 +7,7 @@ import pandas as pd
 import sqlite3
 from dash.dependencies import Input, Output
 import time
-import datetime
+from datetime import datetime
 from pandas import Series
 from scipy import stats 
 from numpy import arange,array,ones 
@@ -23,9 +23,16 @@ value_range = [0, 365]
 
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
+df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
+     'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
+         'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
+
+count_row = df.shape[0]
+days = count_row
 
 # Dropdown year selector values
 year_options = []
@@ -34,80 +41,15 @@ for YEAR in df.index.year.unique():
 
 # Dropdown sea selector values
 sea_options = []
-for name in df.columns:
-    sea_options.append({'label':(name), 'value':name})
-print(sea_options)
+for sea in df.columns.unique():
+    sea_options.append({'label':sea, 'value':sea})
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
 
-# Current day's value- 5 day trailing mean
-today_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-1]
-
-#  Yesterday's value-5 day trailing mean
-yesterday_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-2]
-
-#  1 week ago 5 day trailing mean
-week_ago_value = df_fdta[' (0) Northern_Hemisphere'].iloc[-7]
-
-
-weekly_change = today_value - week_ago_value
-daily_difference = today_value - yesterday_value
-
-# Record minimum
-record_min = df_fdta[' (0) Northern_Hemisphere'].min()
-
-record_min_difference = today_value - record_min
-
-
-record_max = df_fdta[' (0) Northern_Hemisphere'].max()
-
-
-annual_max_all = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
-
-
-sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
-
-
-annual_min_all = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
-
-
-sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
-
-# Lowest annual max
-low_max = annual_max_all[0]
-
-
-record_low_max_difference = today_value - low_max
-
-count_row = df.shape[0]
-days = count_row
-
-year = datetime.datetime.now().year
-annual_maximums = df_fdta[' (0) Northern_Hemisphere'].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:-1, 0]]
-current_year_df = df_fdta[' (0) Northern_Hemisphere'][df_fdta[' (0) Northern_Hemisphere'].index.year == year]
-current_year_max = current_year_df.max()
-change_from_current_year_max = today_value - current_year_max
-
-# Rankings by day of year
-today = datetime.datetime.today()
-yesterday = datetime.datetime.today() - datetime.timedelta(days=1)
-y_day = yesterday.strftime("%d")
-y_mon = yesterday.strftime("%m")
-y_day_int = int(y_day)
-y_mon_int = int(y_mon)
-
-df10 = df_fdta[' (0) Northern_Hemisphere']
-df_daily_rankings = df10[(df10.index.month == y_mon_int) & (df10.index.day == y_day_int)]
-sorted_daily_rankings = df_daily_rankings.sort_values(axis=0, ascending=False)
-drl = sorted_daily_rankings.size
-
-# Linear trendline
-def all_ice_fit():
-    xi = arange(0,days)
-    slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df[" (0) Northern_Hemisphere"])
-    return (slope*xi+intercept)
-
+startyr = 2006
+presentyr = datetime.now().year
+year_count = presentyr-startyr
 
 body = html.Div([
     dbc.Container([
@@ -140,11 +82,31 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div(
-                    html.H6('MASIE 4km, 5 Day Trailing Avg', style={'text-align': 'center'}),
+                    html.H6('Select Sea', style={'text-align': 'center'}),
                 ),
                 width={'size': 6, 'offset': 3}
             ),
         ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Dropdown(id='sea',options=sea_options
+                    ), 
+                    width={'size':4, 'offset':4},
+                ),
+            ],
+            style={'height':30}
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    html.Div(
+                        html.H6('', style={'text-align': 'center'}),
+                    ),
+                ),
+            ],
+            style={'height':30}
+        ),
         dbc.Row(
             [
             dbc.Col(
@@ -199,66 +161,66 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H5("Today's Value: {:,.1f} km2".format(today_value)),
+                    html.H6(id='current-value')
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'center'} 
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Record Minimum: {:,.1f} km2'.format(record_min)),
+                    html.H6(id='record-min'),
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'left'} 
-            ), 
+                style={'text-align':'center'}
+            ),
         ]),
         dbc.Row([
             dbc.Col(
                 html.Div([
-                     html.H5("24 Hour Change: {:,.1f} km2".format(daily_difference)),
+                    html.H6(id='daily-change')
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'center'} 
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Difference: {:,.1f} km2'.format(record_min_difference)),
+                    html.H6(id='record-min-difference'),
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'left'} 
-            ), 
+                style={'text-align':'center'}
+            ),
         ]),
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H5('Weekly Change: {:,.1f} km2'.format(weekly_change)),
+                    html.H6(id='weekly-change')
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'center'} 
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Low Max: {:,.1f} km2, {}'.format(low_max, sorted_annual_max_all.index[0].year)),
+                    html.H6(id='low-max'),
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'left'} 
-            ),  
+                style={'text-align':'center'}
+            ),
         ]),
         dbc.Row([
             dbc.Col(
                 html.Div([
-                    html.H5('Change From Max: {:,.1f} km2, '.format(change_from_current_year_max)),
+                    html.H6(id='max-diff')
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'center'} 
+                style={'text-align':'center'}
             ),
             dbc.Col(
                 html.Div([
-                    html.H5('Difference: {:,.1f} km2'.format(record_low_max_difference)),
+                    html.H6(id='low-max-diff'),
                 ]),
                 width={'size':6},
-                style={'height':30, 'text-align':'left'} 
-            ), 
+                style={'text-align':'center'}
+            ),
         ]),
         dbc.Row([
             dbc.Col(
@@ -285,345 +247,52 @@ body = html.Div([
         ]),
         dbc.Row([
             dbc.Col(
-                html.Div([
-                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_max_all[13], sorted_annual_max_all.index[13].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
+                html.Div(id='annual-max-table'),
             ),
             dbc.Col(
-                html.Div([
-                    html.H6("1- {:,.1f} km2,  {}".format(sorted_annual_min_all[13], sorted_annual_min_all.index[13].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
+                html.Div(id='annual-min-table'),
             ),
             dbc.Col(
-                html.Div([
-                    html.H6("1- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-1], sorted_daily_rankings.index[drl-1].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            )
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_max_all[12], sorted_annual_max_all.index[12].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
+                html.Div(id='current-date-values'),
             ),
-            dbc.Col(
-                html.Div([
-                    html.H6("2- {:,.1f} km2,  {}".format(sorted_annual_min_all[12], sorted_annual_min_all.index[12].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("2- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-2], sorted_daily_rankings.index[drl-2].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_max_all[11], sorted_annual_max_all.index[11].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("3- {:,.1f} km2,  {}".format(sorted_annual_min_all[11], sorted_annual_min_all.index[11].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("3- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-3],sorted_daily_rankings.index[drl-3].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_max_all[10], sorted_annual_max_all.index[10].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("4- {:,.1f} km2,  {}".format(sorted_annual_min_all[10], sorted_annual_min_all.index[10].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("4- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-4], sorted_daily_rankings.index[drl-4].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_max_all[9], sorted_annual_max_all.index[9].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("5- {:,.1f} km2,  {}".format(sorted_annual_min_all[9], sorted_annual_min_all.index[9].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("5- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-5], sorted_daily_rankings.index[drl-5].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_max_all[8], sorted_annual_max_all.index[8].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("6- {:,.1f} km2,  {}".format(sorted_annual_min_all[8], sorted_annual_min_all.index[8].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("6- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-6], sorted_daily_rankings.index[drl-6].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_max_all[7], sorted_annual_max_all.index[7].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("7- {:,.1f} km2,  {}".format(sorted_annual_min_all[7], sorted_annual_min_all.index[7].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("7- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-7], sorted_daily_rankings.index[drl-7].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_max_all[6], sorted_annual_max_all.index[6].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("8- {:,.1f} km2,  {}".format(sorted_annual_min_all[6], sorted_annual_min_all.index[6].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("8- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-8], sorted_daily_rankings.index[drl-8].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_max_all[5], sorted_annual_max_all.index[5].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("9- {:,.1f} km2,  {}".format(sorted_annual_min_all[5], sorted_annual_min_all.index[5].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("9- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-9], sorted_daily_rankings.index[drl-9].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_max_all[4], sorted_annual_max_all.index[4].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'} 
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("10- {:,.1f} km2,  {}".format(sorted_annual_min_all[4], sorted_annual_min_all.index[4].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-            dbc.Col(
-                html.Div([
-                    html.H6("10- {:,.1f} km2,  {}".format(sorted_daily_rankings[drl-10], sorted_daily_rankings.index[drl-10].year)),
-                ]),
-                width={'size':4},
-                style={'text-align':'center'}
-            ) 
-        ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.H5('Daily Ice Extent: 2006-Present', style={'text-align': 'center', 'color': 'black'}),
-                ),
-                width={'size':4},
-                style={'text-align':'center'}
-            ),
-        ],
-        justify='around'
-        ),
-        dbc.Row(
-        [
-           dbc.Col(
-                html.Div([
-                    dcc.Graph(id='all-ice',  
-                        figure = {
-                            'data': [
-                                {
-                                    'x' : df_fdta.index, 
-                                    'y' : df_fdta[' (0) Northern_Hemisphere'],
-                                    'mode' : 'lines + markers',
-                                    'name' : 'Ice'
-                                },
-                                {
-                                    'x' : df_fdta.index,
-                                    'y' : all_ice_fit(),
-                                    'name' : 'Trend'
-                                }
-                            ],
-                            'layout': go.Layout(
-                                xaxis = {'title': ''},
-                                yaxis = {'title': 'Ice Extent km2'},
-                                hovermode = 'closest',
-                                height = 500, 
-                                title = 'Arctic Sea Ice Extent'    
-                            ), 
-                        }
-                    ),
-                ]),
-                width = {'size':10},
-            ), 
-        ],
-        justify='around'
-        ),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                ]),
-                style={'height':50, 'align':'end'} 
-            ), 
-        ]),
-    
-        dbc.Row([
-            dbc.Col(
-                html.Div(
-                    html.H5('Data for Selected Sea', style={'text-align': 'center', 'color': 'black'}),
-                ),
-                width={'size':4},
-                style={'text-align':'start'}
-            ),
-            dbc.Col(
-                    dcc.Dropdown(id='sea',options=sea_options[1:]), 
-                    width={'size':4},
-                ),
-        ],
-        justify='around'
-        ),
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                ]),
-                style={'height':50, 'align':'end'} 
-            ), 
         ]),
         dbc.Row(
             [
             dbc.Col(
                 html.Div(
-                    dcc.Graph(id='ice-extent-by-sea', style={'height':450}),    
+                    dcc.Graph(id='all-ice-extent', style={'height':450}),    
                 ),
                 width={'size':10}
                 ),
             ],
         justify='around'
         ),
-    ]),
-])
+        
+    ])
 
+])
 
 @app.callback(
     Output('ice-extent', 'figure'),
-    [Input('year1', 'value'),
+    [Input('sea', 'value'),
+    Input('year1', 'value'),
     Input('year2', 'value'),
     Input('year3', 'value'),
     Input('year4', 'value'),])
-def update_figure(selected_year1,selected_year2, selected_year3, selected_year4):
+def update_figure(selected_sea,selected_year1,selected_year2, selected_year3, selected_year4):
     traces = []
     selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_years:
         sorted_daily_values=df_fdta[df_fdta.index.year == year]
         traces.append(go.Scatter(
-            # x=df2['yyyyddd'],
-            y=sorted_daily_values[' (0) Northern_Hemisphere'],
+            y=sorted_daily_values[selected_sea],
             mode='lines',
             name=year
         ))
     return {
         'data': traces,
         'layout': go.Layout(
-                title = 'Arctic Sea Ice Extent',
+                title = '{} Ice Extent'.format(selected_sea),
                 xaxis = {'title': 'Day', 'range': value_range},
                 yaxis = {'title': 'Ice extent (km2)'},
                 hovermode='closest',
@@ -631,15 +300,160 @@ def update_figure(selected_year1,selected_year2, selected_year3, selected_year4)
     }
 
 @app.callback(
-    Output('ice-extent-by-sea', 'figure'),
+    Output('current-value', 'children'),
     [Input('sea', 'value')])
-def update_figure(selected_sea):
-    go.Scatter(
-        
-    )
-)
+def current_ice(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    return "Today's Value: {:,.0f} km2".format(today_value),
 
+@app.callback(
+    Output('record-min', 'children'),
+    [Input('sea', 'value')])
+def current_ice_a(selected_sea):
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=False)
+    record_min = df_fdta[selected_sea].min()
+    return "Record Minimum: {:,.0f} km2 - {}".format(record_min, sorted_annual_min_all.index[-1].year),
+
+@app.callback(
+    Output('daily-change', 'children'),
+    [Input('sea', 'value')])
+def current_ice_b(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    yesterday_value = df_fdta[selected_sea].iloc[-2]
+    daily_change = today_value - yesterday_value
+    return "24 Hour Change: {:,.0f} km2".format(daily_change)
+
+@app.callback(
+    Output('record-min-difference', 'children'),
+    [Input('sea', 'value')])
+def current_ice_c(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    record_min = df_fdta[selected_sea].min()
+    record_min_difference = today_value - record_min
+    return "Difference From Record: {:,.0f} km2".format(record_min_difference)
+
+@app.callback(
+    Output('weekly-change', 'children'),
+    [Input('sea', 'value')])
+def current_ice_d(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    week_ago_value = df_fdta[selected_sea].iloc[-7]
+    weekly_change = today_value - week_ago_value
+    return "Weekly Change: {:,.0f} km2".format(weekly_change)
+
+@app.callback(
+    Output('low-max', 'children'),
+    [Input('sea', 'value')])
+def current_ice_e(selected_sea):
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=False)
+    low_max = annual_max_all[0]
+    return "Low Max: {:,.0f} km2 - {}".format(low_max, sorted_annual_max_all.index[-1].year)
+
+@app.callback(
+    Output('max-diff', 'children'),
+    [Input('sea', 'value')])
+def current_ice_f(selected_sea):
+    year = datetime.now().year
+    today_value = df_fdta[selected_sea].iloc[-1]
+    current_year_df = df_fdta[selected_sea][df_fdta[selected_sea].index.year == year]
+    current_year_max = current_year_df.max()
+    change_from_current_year_max = today_value - current_year_max
+    return "Change From Max: {:,.0f} km2".format(change_from_current_year_max)
+
+@app.callback(
+    Output('low-max-diff', 'children'),
+    [Input('sea', 'value')])
+def current_ice_g(selected_sea):
+    today_value = df_fdta[selected_sea].iloc[-1]
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    low_max = annual_max_all[0]
+    record_low_max_difference = today_value - low_max
+    return "Difference From Low Max: {:,.0f} km2".format(record_low_max_difference)
+
+@app.callback(
+    Output('all-ice-extent', 'figure'),
+    [Input('sea', 'value')])
+def update_figure_a(selected_sea):
+    traces = []
+    def all_ice_fit():
+        xi = arange(0,days)
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,df[selected_sea])
+        return (slope*xi+intercept)
+    traces.append(go.Scatter(
+        x = df_fdta.index, 
+        y = df_fdta[selected_sea],
+        name = 'Ice'
+    )),
+    traces.append(go.Scatter(
+        x = df_fdta.index,
+        y = all_ice_fit(),
+        name = 'trend'
+    ))
+    return {
+        'data': traces,
+        'layout': go.Layout(
+                xaxis = {'title': ''},
+                yaxis = {'title': 'Ice Extent km2'},
+                hovermode = 'closest',
+                height = 500, 
+                title = '{} Ice Extent'.format(selected_sea)
+                )  
+    }
+
+@app.callback(
+    Output('annual-max-table', 'children'),
+    [Input('sea', 'value')])
+def record_ice_table(selected_sea, max_rows=10):
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
+   
+    sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
+    sama = sama.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
+            html.Td(sama.iloc[i][1])
+            ]) for i in range(min(len(sama), max_rows))]
+    )
+
+@app.callback(
+    Output('annual-min-table', 'children'),
+    [Input('sea', 'value')])
+def record_ice_table_a(selected_sea, max_rows=10):
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=True)
+    sama = pd.DataFrame({'Extent km2':sorted_annual_min_all.values,'YEAR':sorted_annual_min_all.index.year})
+    sama = sama.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
+            html.Td(sama.iloc[i][1])
+            ]) for i in range(min(len(sama), max_rows))]
+    )
+
+@app.callback(
+    Output('current-date-values', 'children'),
+    [Input('sea', 'value')])
+def current_date_table(selected_sea, max_rows=10):
+    dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
+    dr_sea = dr[selected_sea]
+    sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
+  
+    sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
+    sort_dr_sea= sort_dr_sea.round(0)
+
+    return html.Table (
+        [html.Tr([
+            html.Td(sort_dr_sea.iloc[i].map('{:,.0f}'.format)[0]), 
+            html.Td(sort_dr_sea.iloc[i][1])
+        ]) for i in range(min(len(sort_dr_sea), max_rows))]
+    )
+   
 app.layout = html.Div(body)
 
 if __name__ == "__main__":
     app.run_server(port=8124, debug=True)
+
