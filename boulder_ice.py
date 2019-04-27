@@ -31,6 +31,8 @@ df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian 
      'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
 
+df1 = df['Total Arctic Sea']
+
 count_row = df.shape[0]
 days = count_row
 
@@ -49,10 +51,38 @@ df_fdta = df.rolling(window=5).mean()
 
 startyr = 2006
 presentyr = datetime.now().year
+last_year = presentyr-1
 year_count = presentyr-startyr
 presentday = datetime.now().day
 dayofyear = time.strftime("%j")
 dayofyear = int(dayofyear)
+
+arctic = df['Total Arctic Sea']
+years = []
+
+
+year_dict = {}
+keys = []
+
+
+for i in df.index.year.unique():
+    keys.append(i)
+
+def dictionary_maker():
+    for i in keys:
+        year_dict[i] = 0
+keys = [str(i) for i in keys]
+dictionary_maker()
+
+
+
+m = 1
+d = 1
+
+arctic_r = arctic[(arctic.index.month == m) & (arctic.index.day == d)]
+sort_arctic_r = arctic_r.sort_values(axis=0, ascending=True)
+
+
 
 
 body = html.Div([
@@ -266,8 +296,11 @@ body = html.Div([
                 html.Div(
                     dcc.Graph(id='all-ice-extent', style={'height':450}),    
                 ),
-                width={'size':10}
+                width={'size':8}
                 ),
+            dbc.Col(
+                html.Div(id='daily-points'),
+            ),
             ],
         justify='around'
         ),
@@ -420,7 +453,6 @@ def update_figure_a(selected_sea):
     [Input('sea', 'value')])
 def record_ice_table(selected_sea, max_rows=10):
     annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
-    
     sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
    
     sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
@@ -454,7 +486,6 @@ def current_date_table(selected_sea, max_rows=10):
     dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
     dr_sea = dr[selected_sea]
     sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
-  
     sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
     sort_dr_sea= sort_dr_sea.round(0)
 
@@ -464,7 +495,33 @@ def current_date_table(selected_sea, max_rows=10):
             html.Td(sort_dr_sea.iloc[i][1])
         ]) for i in range(min(len(sort_dr_sea), max_rows))]
     )
-   
+
+@app.callback(
+    Output('daily-points', 'children'),
+    [Input('sea', 'value')])
+
+def daily_points_table(max_rows=14):
+    x = 0
+    rankings = [['2006', 0],['2007', 0],['2008', 0],['2009', 0],['2010', 0],['2011', 0],['2012', 0],['2013', 0],['2014', 0],['2015', 0],['2016', 0],['2017', 0],['2018', 0],['2019', 0]]
+    rank = pd.DataFrame(rankings, columns = ['Year','Pts'])
+    print(x)
+    while x < 365:
+        dr1 = df1[(df1.index.month == df1.index[x].month) & (df1.index.day == df1.index[x].day)]
+        dr_sort = dr1.sort_values(axis=0, ascending=True)
+        rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 3
+        rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 2
+        rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 1
+        rank.sort_values(by=['Pts'], ascending=True)
+        x += 1
+
+    rank.sort_values(by=['Pts'], ascending=True)
+    print(rank.iloc[7][1])
+    return html.Table (
+        [html.Tr([
+            html.Td(rank.iloc[y][0]), 
+            html.Td(rank.iloc[y][1])
+        ]) for y in range(0,14)]
+    )
 app.layout = html.Div(body)
 
 if __name__ == "__main__":
