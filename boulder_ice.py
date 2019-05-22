@@ -4,6 +4,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import pandas as pd
+import numpy as np
 import sqlite3
 from dash.dependencies import Input, Output
 import time
@@ -349,10 +350,12 @@ body = html.Div([
     Output('monthly-bar', 'figure'),
     [Input('month', 'value')])
 def update_figure_b(selected_month):
-    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/9.json')
+    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/1.json')
     ice = []
     for i in range(len(df_monthly['data']) - 5):
         ice.append(df_monthly['data'][i]['value'])
+    print(type(ice))
+    ice = [0 if x == -9999 else x for x in ice]
     print(ice)
     # return print(df_monthly['data'].index[:-5])
     data = [
