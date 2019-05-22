@@ -350,7 +350,17 @@ body = html.Div([
     [Input('month', 'value')])
 def update_figure_b(selected_month):
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/6.json')
-    return print(df_monthly.iloc[1])
+    data = []
+    for i in range(10):
+        data.append(df_monthly['data'][i]['value'])
+    print(data)
+    # return print(df_monthly['data'].index[:-5])
+    # data = [
+    #     go.Bar(
+    #         x=df_monthly['data'].index[:-5]
+    #         y=df_monthly['data'][]
+    #     )
+    # ]
 
 
 @app.callback(
