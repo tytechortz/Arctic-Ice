@@ -42,7 +42,20 @@ for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
 # Dropdown month selector values
-month_options = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+month_options = [
+{'label':'JAN', 'value':1},
+{'label':'FEB', 'value':2},
+{'label':'MAR', 'value':3},
+{'label':'APR', 'value':4},
+{'label':'MAY', 'value':5},
+{'label':'JUN', 'value':6},
+{'label':'JUL', 'value':7},
+{'label':'AUG', 'value':8},
+{'label':'SEP', 'value':9},
+{'label':'OCT', 'value':10},
+{'label':'NOV', 'value':11},
+{'label':'DEC', 'value':12}
+]
 
 # Dropdown sea selector values
 sea_options = []
