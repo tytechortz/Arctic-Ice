@@ -349,18 +349,27 @@ body = html.Div([
     Output('monthly-bar', 'figure'),
     [Input('month', 'value')])
 def update_figure_b(selected_month):
-    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/6.json')
-    data = []
-    for i in range(10):
-        data.append(df_monthly['data'][i]['value'])
-    print(data)
+    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/9.json')
+    ice = []
+    for i in range(len(df_monthly['data']) - 5):
+        ice.append(df_monthly['data'][i]['value'])
+    print(ice)
     # return print(df_monthly['data'].index[:-5])
-    # data = [
-    #     go.Bar(
-    #         x=df_monthly['data'].index[:-5]
-    #         y=df_monthly['data'][]
-    #     )
-    # ]
+    data = [
+        go.Bar(
+            x=df_monthly['data'].index[:-5],
+            y=ice
+        )
+    ]
+    layout = go.Layout(
+        xaxis={'title': 'Year'},
+        yaxis={'title': 'Ice', 'range':[0,20]},
+        title='Monthly Avg Ice Extent',
+        plot_bgcolor = 'lightgray',
+    )
+    return {'data': data, 'layout': layout} 
+
+
 
 
 @app.callback(
@@ -574,7 +583,7 @@ def daily_points_table(max_rows=14):
         x += 1
 
     rank.sort_values(by=['Pts'], ascending=True)
-    print(rank.iloc[7][1])
+    # print(rank.iloc[7][1])
     return html.Table (
         [html.Tr([
             html.Td(rank.iloc[y][0]), 
