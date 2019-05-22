@@ -41,6 +41,9 @@ year_options = []
 for YEAR in df.index.year.unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
+# Dropdown month selector values
+month_options = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
 # Dropdown sea selector values
 sea_options = []
 for sea in df.columns.unique():
@@ -289,6 +292,24 @@ body = html.Div([
             dbc.Col(
                 html.Div(id='current-date-values'),
             ),
+        ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Dropdown(id='month',options=month_options
+                    ), 
+                    width={'size':4, 'offset':4},
+                ),
+            ],
+            style={'height':30}
+        ),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    dcc.Graph(id='monthly-bar', style={'height':450}),    
+                ),
+                width={'size':8}
+                ),
         ]),
         dbc.Row(
             [
