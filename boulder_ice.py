@@ -24,6 +24,7 @@ value_range = [0, 365]
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
+
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
@@ -343,6 +344,14 @@ body = html.Div([
     ])
 
 ])
+
+@app.callback(
+    Output('monthly-bar', 'figure'),
+    [Input('month', 'value')])
+def update_figure_b(selected_month):
+    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/6.json')
+    return print(df_monthly.iloc[1])
+
 
 @app.callback(
     Output('ice-extent', 'figure'),
