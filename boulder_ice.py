@@ -349,18 +349,31 @@ body = html.Div([
     [Input('month', 'value')])
 def update_figure_b(month_value):
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
+    print(df_monthly)
     ice = []
     for i in range(len(df_monthly['data']) - 5):
         ice.append(df_monthly['data'][i]['value'])
-    print(month_options[0]['label'])
-    ice = [0 if x == -9999 else x for x in ice]
-   
-    # return print(df_monthly['data'].index[:-5])
+    ice = [14.42 if x == -9999 else x for x in ice]
+    ice = list(map(float, ice))
+    print(ice)
+    # trend line
+    def fit():
+        xi = arange(0,year_count-4)
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,)
+        return (slope*xi+intercept)
+
     data = [
         go.Bar(
             x=df_monthly['data'].index[:-5],
             y=ice
-        )
+        ),
+        # go.Scatter(
+        #         # x=df_100['DATE'],
+        #         y=fit(),
+        #         name='trend',
+        #         line = {'color':'red'}
+        #     ),
+
     ]
     layout = go.Layout(
         xaxis={'title': 'Year'},
