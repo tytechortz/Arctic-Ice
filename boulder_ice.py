@@ -377,7 +377,7 @@ def update_figure_b(month_value):
     ]
     layout = go.Layout(
         xaxis={'title': 'Year'},
-        yaxis={'title': 'Ice', 'range':[0,20]},
+        yaxis={'title': 'Ice', 'range':[(min(ice)-1),(max(ice)+1)]},
         title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
         plot_bgcolor = 'lightgray',
     )
