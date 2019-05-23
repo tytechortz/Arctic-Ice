@@ -101,8 +101,6 @@ arctic_r = arctic[(arctic.index.month == m) & (arctic.index.day == d)]
 sort_arctic_r = arctic_r.sort_values(axis=0, ascending=True)
 
 
-
-
 body = html.Div([
     dbc.Container([
         dbc.Row([
@@ -311,7 +309,7 @@ body = html.Div([
         dbc.Row(
             [
                 dbc.Col(
-                    dcc.Dropdown(id='month',options=month_options
+                    dcc.Dropdown(id='month',options=month_options,value='1'
                     ), 
                     width={'size':4, 'offset':4},
                 ),
@@ -321,9 +319,9 @@ body = html.Div([
         dbc.Row([
             dbc.Col(
                 html.Div(
-                    dcc.Graph(id='monthly-bar', style={'height':450}),    
+                    dcc.Graph(id='monthly-bar', style={'height':600}),    
                 ),
-                width={'size':8}
+                width={'size':12}
                 ),
         ]),
         dbc.Row(
@@ -349,14 +347,14 @@ body = html.Div([
 @app.callback(
     Output('monthly-bar', 'figure'),
     [Input('month', 'value')])
-def update_figure_b(selected_month):
-    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/1.json')
+def update_figure_b(month_value):
+    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
     ice = []
     for i in range(len(df_monthly['data']) - 5):
         ice.append(df_monthly['data'][i]['value'])
-    print(type(ice))
+    print(month_options[0]['label'])
     ice = [0 if x == -9999 else x for x in ice]
-    print(ice)
+   
     # return print(df_monthly['data'].index[:-5])
     data = [
         go.Bar(
@@ -367,7 +365,7 @@ def update_figure_b(selected_month):
     layout = go.Layout(
         xaxis={'title': 'Year'},
         yaxis={'title': 'Ice', 'range':[0,20]},
-        title='Monthly Avg Ice Extent',
+        title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
         plot_bgcolor = 'lightgray',
     )
     return {'data': data, 'layout': layout} 
