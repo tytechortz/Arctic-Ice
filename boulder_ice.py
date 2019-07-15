@@ -349,9 +349,9 @@ body = html.Div([
     Output('monthly-bar', 'figure'),
     [Input('month', 'value')])
 def update_figure_b(month_value):
-    print(month_value)
+    # print(month_value)
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
-    print(df_monthly)
+    # print(df_monthly)
     ice = []
     for i in range(len(df_monthly['data']) - 5):
         ice.append(df_monthly['data'][i]['value'])
