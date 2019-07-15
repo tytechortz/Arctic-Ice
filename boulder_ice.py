@@ -360,7 +360,7 @@ def update_figure_b(month_value):
     print(ice)
     # trend line
     def fit():
-        xi = arange(0,41)
+        xi = arange(0,len(ice))
         slope, intercept, r_value, p_value, std_err = stats.linregress(xi,ice)
         return (slope*xi+intercept)
 
