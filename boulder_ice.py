@@ -370,7 +370,7 @@ def update_figure_b(month_value):
             y=ice
         ),
         go.Scatter(
-                # x=df_100['DATE'],
+                x=df_monthly['data'].index[:-5],
                 y=fit(),
                 name='trend',
                 line = {'color':'red'}
