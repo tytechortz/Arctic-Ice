@@ -66,6 +66,7 @@ for sea in df.columns.unique():
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
+print(df_fdta['Total Arctic Sea'].iloc[-2])
 
 startyr = 2006
 presentyr = datetime.now().year
@@ -295,23 +296,12 @@ body = html.Div([
                 style={'height':30, 'text-align':'center'}
             ),
         ]),
-        dbc.Row([
-            dbc.Col(
-                html.Div(id='annual-max-table'),
-            ),
-            dbc.Col(
-                html.Div(id='annual-min-table'),
-            ),
-            dbc.Col(
-                html.Div(id='current-date-values'),
-            ),
-        ]),
         dbc.Row(
             [
                 dbc.Col(
                     dcc.Dropdown(id='month',options=month_options,value='1'
                     ), 
-                    width={'size':4, 'offset':4},
+                    width={'size':2, 'offset':5},
                 ),
             ],
             style={'height':30}
@@ -323,6 +313,17 @@ body = html.Div([
                 ),
                 width={'size':12}
                 ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div(id='annual-max-table'),
+            ),
+            dbc.Col(
+                html.Div(id='annual-min-table'),
+            ),
+            dbc.Col(
+                html.Div(id='current-date-values'),
+            ),
         ]),
         dbc.Row(
             [
@@ -348,6 +349,7 @@ body = html.Div([
     Output('monthly-bar', 'figure'),
     [Input('month', 'value')])
 def update_figure_b(month_value):
+    print(month_value)
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
     print(df_monthly)
     ice = []
@@ -358,8 +360,8 @@ def update_figure_b(month_value):
     print(ice)
     # trend line
     def fit():
-        xi = arange(0,year_count-4)
-        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,)
+        xi = arange(0,41)
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,ice)
         return (slope*xi+intercept)
 
     data = [
@@ -367,17 +369,17 @@ def update_figure_b(month_value):
             x=df_monthly['data'].index[:-5],
             y=ice
         ),
-        # go.Scatter(
-        #         # x=df_100['DATE'],
-        #         y=fit(),
-        #         name='trend',
-        #         line = {'color':'red'}
-        #     ),
+        go.Scatter(
+                # x=df_100['DATE'],
+                y=fit(),
+                name='trend',
+                line = {'color':'red'}
+            ),
 
     ]
     layout = go.Layout(
         xaxis={'title': 'Year'},
-        yaxis={'title': 'Ice', 'range':[(min(ice)-1),(max(ice)+1)]},
+        yaxis={'title': 'Ice Extent-Million km2', 'range':[(min(ice)-1),(max(ice)+1)]},
         title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
         plot_bgcolor = 'lightgray',
     )
@@ -607,5 +609,5 @@ def daily_points_table(max_rows=14):
 app.layout = html.Div(body)
 
 if __name__ == "__main__":
-    app.run_server(port=8124, debug=True)
+    app.run_server(port=8124, debug=False)
 
