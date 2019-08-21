@@ -1,5 +1,6 @@
 from ftplib import FTP
 import os
+import pandas as pd
 
 ftp = FTP('sidads.colorado.edu')
 # ftp = FTP('ftp.cse.buffalo.edu')
@@ -13,3 +14,6 @@ files = ftp.dir()
 ftp.retrbinary('RETR N_seaice_extent_daily_v3.0.csv', open('N_seaice_extent_daily_v3.0.csv', 'wb').write)
 ftp.quit()
 
+df = pd.read_csv('N_seaice_extent_daily_v3.0.csv')
+
+print(df.head())
