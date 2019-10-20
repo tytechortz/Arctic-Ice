@@ -195,9 +195,6 @@ app.layout = get_layout
     Input('product','value')])
 def display_graph_stats(ice, selected_product):
     df_monthly = pd.read_json(ice)
-    # print(df_monthly)
-    # df_monthly = df.apply(lambda x: pd.Series(x['data']),axis=1).stack().reset_index(level=1, drop=False)
-    # df_monthly.columns = ['Extent', 'Anom']
     extent = df_monthly['data'].apply(pd.Series)
     extent['value'] = extent['value'].astype(float)
     extent = extent.sort_values('value')
@@ -207,22 +204,20 @@ def display_graph_stats(ice, selected_product):
 
     if selected_product == 'monthly-bar':
         return html.Div([
-                html.Div('10 Lowest Extents for January', style={'text-align': 'center'}),
+                html.Div('10 Lowest Extents for January', style={'text-align': 'right'}),
                 html.Div([
                     html.Div([
                         html.Div([
-                            # create_value_rows()
-                            html.Div('{}'.format(extent.iloc[i,0], style={'text-align': 'center'})) for i in range(10)
-                            # html.Div('{}'.format(extent.iloc[1,0]), style={'text-align': 'center'}),
+                            html.Div('{}'.format(extent.index[i]), style={'text-align': 'center'}) for i in range(10)
                         ],
-                            className='six columns'
+                            className='eight columns'
                         ),
                         html.Div([
-                            # create_year_rows()
-                            html.Div('{}'.format(extent.index[i], style={'text-align': 'center'})) for i in range(10)
+                            html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
                         ],
-                            className='six columns'
+                            className='four columns'
                         ),
+                        
                     ],
                         className='row'
                     ),
