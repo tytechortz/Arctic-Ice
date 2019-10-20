@@ -184,6 +184,7 @@ app.layout = get_layout
 def display_year_selector(product_value):
     if product_value == 'years-graph':
         return html.P('Select Years') ,dcc.Checklist(
+            id='selected-years',
             options=year_options,
     # value=[],
     # labelStyle={'display': 'inline-block'}       
@@ -192,10 +193,12 @@ def display_year_selector(product_value):
 @app.callback(
     Output('sea-selector', 'children'),
     [Input('product', 'value')])
-def display_year_selector(product_value):
+def display_sea_selector(product_value):
     if product_value == 'years-graph':
         return html.P('Select Sea') ,dcc.Dropdown(
+            id='selected-sea',
             options=sea_options,
+            
     # value=[],
     # labelStyle={'display': 'inline-block'}       
                 )
@@ -205,10 +208,34 @@ def display_year_selector(product_value):
     [Input('product', 'value')])
 def display_graph(value):
     if value == 'years-graph':
-        return dcc.Graph(id='years-ice')
+        return dcc.Graph(id='ice-extent')
     elif value == 'avg-bar':
         return dcc.Graph(id='avg-bar')
 
+@app.callback(
+    Output('ice-extent', 'figure'),
+    [Input('selected-sea', 'value'),
+    Input('selected-years', 'value')])
+def update_figure(selected_sea, selected_year):
+    print(selected_year)
+    traces = []
+    # selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
+    for year in selected_year:
+        sorted_daily_values=df_fdta[df_fdta.index.year == year]
+        traces.append(go.Scatter(
+            y=sorted_daily_values[selected_sea],
+            mode='lines',
+            name=year
+        ))
+    return {
+        'data': traces,
+        'layout': go.Layout(
+                title = '{} Ice Extent'.format(selected_sea),
+                xaxis = {'title': 'Day', 'range': value_range},
+                yaxis = {'title': 'Ice extent (km2)'},
+                hovermode='closest',
+                )  
+    }
 
 # @app.callback(
 #     Output('graph', 'children'),
