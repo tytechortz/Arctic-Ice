@@ -201,19 +201,25 @@ def display_graph_stats(ice, selected_product):
     extent = df_monthly['data'].apply(pd.Series)
     extent['value'] = extent['value'].astype(float)
     extent = extent.sort_values('value')
+    extent = extent[extent.value != -9999]
     print(extent)
+    print(extent.iloc[0,0])
+
     if selected_product == 'monthly-bar':
         return html.Div([
                 html.Div('10 Lowest Extents for January', style={'text-align': 'center'}),
                 html.Div([
                     html.Div([
                         html.Div([
-                            html.Div('{}'.format(extent.iloc[0,0]), style={'text-align': 'center'})
+                            # create_value_rows()
+                            html.Div('{}'.format(extent.iloc[i,0], style={'text-align': 'center'})) for i in range(10)
+                            # html.Div('{}'.format(extent.iloc[1,0]), style={'text-align': 'center'}),
                         ],
                             className='six columns'
                         ),
                         html.Div([
-                            html.Div('{}'.format(extent.index[0]), style={'text-align': 'center'})
+                            # create_year_rows()
+                            html.Div('{}'.format(extent.index[i], style={'text-align': 'center'})) for i in range(10)
                         ],
                             className='six columns'
                         ),
