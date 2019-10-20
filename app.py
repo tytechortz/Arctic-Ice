@@ -138,6 +138,7 @@ def get_layout():
                         options=[
                             {'label':'Ice Exent By Year', 'value':'years-graph'},
                             {'label':'Avg Monthy Extent', 'value':'monthly-bar'},
+                            {'label':'Extent Stats', 'value':'extent-stats'},
                         ],
                         # value='temp-graph',
                         labelStyle={'display': 'block'},
@@ -167,6 +168,13 @@ def get_layout():
                     className='eight columns'
                 ),
                 html.Div([
+                    html.Div(
+                        id='stats'
+                    ),
+                ],
+                    className='twelve columns'
+                ),
+                html.Div([
                     html.Div([
                         html.Div(id='year-selector'),
                     ],
@@ -184,10 +192,19 @@ def get_layout():
             ],
                 className='row'
             ),
-            html.Div(id='df-monthly', style={'display': 'none'}),
+            html.Div(id='df-monthly', style={'display': 'none'})
     ])
 
 app.layout = get_layout
+
+@app.callback(
+    Output('stats', 'children'),
+    [Input('product', 'value')])
+def display_stats(selected_product):
+    if selected_product == 'extent-stats':
+        return html.Div('Fear This')
+
+
 
 @app.callback(
     Output('bar-stats', 'children'),
@@ -204,7 +221,7 @@ def display_graph_stats(ice, selected_product):
 
     if selected_product == 'monthly-bar':
         return html.Div([
-                html.Div('10 Lowest Extents for January', style={'text-align': 'right'}),
+                html.Div('10 Lowest Extents for January', style={'text-align': 'center'}),
                 html.Div([
                     html.Div([
                         html.Div([
