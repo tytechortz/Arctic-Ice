@@ -137,7 +137,7 @@ def get_layout():
                         id='product',
                         options=[
                             {'label':'Ice Exent By Year', 'value':'years-graph'},
-                            {'label':'Avg Monthy Extent', 'value':'avg-bar'},
+                            {'label':'Avg Monthy Extent', 'value':'monthly-bar'},
                         ],
                         # value='temp-graph',
                         labelStyle={'display': 'block'},
@@ -147,6 +147,11 @@ def get_layout():
                 ),
                 html.Div([
                     html.Div(id='sea-selector'),
+                ],
+                    className='two columns'
+                ),
+                html.Div([
+                    html.Div(id='month-selector'),
                 ],
                     className='two columns'
                 ),
@@ -182,9 +187,7 @@ def display_year_selector(product_value):
     if product_value == 'years-graph':
         return html.P('Select Years') ,dcc.Checklist(
             id='selected-years',
-            options=year_options,
-    # value=[],
-    # labelStyle={'display': 'inline-block'}       
+            options=year_options,       
                 )
 
 @app.callback(
@@ -194,10 +197,18 @@ def display_sea_selector(product_value):
     if product_value == 'years-graph':
         return html.P('Select Sea') ,dcc.Dropdown(
             id='selected-sea',
-            options=sea_options,
-            
-    # value=[],
-    # labelStyle={'display': 'inline-block'}       
+            options=sea_options,      
+                )
+
+@app.callback(
+    Output('month-selector', 'children'),
+    [Input('product', 'value')])
+def display_month_selector(product_value):
+    if product_value == 'monthly-bar':
+        return html.P('Select Month') ,dcc.Dropdown(
+            id='month',
+            options=month_options,
+            value=1     
                 )
 
 @app.callback(
@@ -206,8 +217,8 @@ def display_sea_selector(product_value):
 def display_graph(value):
     if value == 'years-graph':
         return dcc.Graph(id='ice-extent')
-    elif value == 'avg-bar':
-        return dcc.Graph(id='avg-bar')
+    elif value == 'monthly-bar':
+        return dcc.Graph(id='monthly-bar')
 
 @app.callback(
     Output('ice-extent', 'figure'),
@@ -233,6 +244,45 @@ def update_figure(selected_sea, selected_year):
                 hovermode='closest',
                 )  
     }
+
+@app.callback(
+    Output('monthly-bar', 'figure'),
+    [Input('month', 'value')])
+def update_figure_b(month_value):
+    df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
+    df_monthly = df_monthly.iloc[5:]
+    ice = []
+    for i in range(len(df_monthly['data'])):
+        ice.append(df_monthly['data'][i]['value'])
+    ice = [14.42 if x == -9999 else x for x in ice]
+    ice = list(map(float, ice))
+    
+    # trend line
+    def fit():
+        xi = arange(0,len(ice))
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,ice)
+        return (slope*xi+intercept)
+
+    data = [
+        go.Bar(
+            x=df_monthly['data'].index,
+            y=ice
+        ),
+        go.Scatter(
+                x=df_monthly['data'].index,
+                y=fit(),
+                name='trend',
+                line = {'color':'red'}
+            ),
+
+    ]
+    layout = go.Layout(
+        xaxis={'title': 'Year'},
+        yaxis={'title': 'Ice Extent-Million km2', 'range':[(min(ice)-1),(max(ice)+1)]},
+        title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
+        plot_bgcolor = 'lightgray',
+    )
+    return {'data': data, 'layout': layout} 
 
 # @app.callback(
 #     Output('graph', 'children'),

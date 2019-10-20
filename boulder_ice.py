@@ -617,5 +617,5 @@ def daily_points_table(max_rows=14):
 app.layout = html.Div(body)
 
 if __name__ == "__main__":
-    app.run_server(port=8124, debug=False)
+    app.run_server(port=8050, debug=False)
 
