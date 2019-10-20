@@ -159,19 +159,16 @@ def get_layout():
                     html.Div(
                         id='graph'
                     ),
-                    html.Div(
-                        id='stats'
-                    ),
+                    html.Div([
+                        html.Div(
+                            id='stats'
+                        ),
+                    ],
+                        className='eight columns'   
+                    ), 
                 ],
                     className='eight columns'
                 ),
-                # html.Div([
-                #     html.Div(
-                #         id='stats'
-                #     ),
-                # ],
-                #     className='ten columns'
-                # ),
                 html.Div([
                     html.Div([
                         html.Div(id='year-selector'),
@@ -199,7 +196,7 @@ app.layout = get_layout
 @app.callback(
     Output('stats', 'children'),
     [Input('df-fdta', 'children'),
-    Input('selected-sea', 'children'),
+    Input('selected-sea', 'value'),
     Input('product', 'value')])
 def daily_ranking(df_fdta, selected_sea, selected_product):
     print(selected_sea)
@@ -211,13 +208,31 @@ def daily_ranking(df_fdta, selected_sea, selected_product):
     sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
     sort_dr_sea= sort_dr_sea.round(0)
     print(sort_dr_sea)
-
-    return html.Div([
-        html.Div('Current Day Ranks', style={'text-align': 'center'}),
-    ],
-        className='round1'
-    ),
-
+    if selected_product == 'extent-stats':
+        return html.Div([
+                html.Div('Current Day Ranks', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{}'.format(sort_dr_sea.YEAR[i]), style={'text-align': 'center'}) for i in range(10)
+                        ],
+                            className='eight columns'
+                        ),
+                        html.Div([
+                            html.Div('{}'.format(sort_dr_sea.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
+                        ],
+                            className='four columns'
+                        ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
+            ],
+                className='round1'
+            ),
+                    
 @app.callback(
     Output('df-fdta', 'children'),
     [Input('product', 'value')])
@@ -253,15 +268,13 @@ def display_graph_stats(ice, selected_product):
                             html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
                         ],
                             className='four columns'
-                        ),
-                        
+                        ),  
                     ],
                         className='row'
                     ),
                 ],
                     className='round1'
-                ),
-                    
+                ),      
             ],
                 className='round1'
             ),
@@ -284,7 +297,7 @@ def display_sea_selector(product_value):
         return html.P('Select Sea') ,dcc.Dropdown(
             id='selected-sea',
             options=sea_options,
-            value='Total Arctic Sea'      
+            # value='Total Arctic Sea'      
                 )
 
 @app.callback(
