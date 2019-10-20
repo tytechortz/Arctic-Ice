@@ -167,17 +167,20 @@ def get_layout():
                     className='eight columns'
                 ),
                 html.Div([
-                    html.Div(id='year-selector'),
-                ],
-                    className='two columns'
-                ),
-                html.Div([
+                    html.Div([
+                        html.Div(id='year-selector'),
+                    ],
+                        className='four columns'
+                    ),
                     html.Div([
                         html.Div(id='bar-stats'
                         ),
                     ],
+                        className='twelve columns'
                     ),
-                ]),
+                ],
+                    className='four columns'
+                ),
             ],
                 className='row'
             ),
@@ -197,9 +200,31 @@ def display_graph_stats(ice, selected_product):
     # df_monthly.columns = ['Extent', 'Anom']
     extent = df_monthly['data'].apply(pd.Series)
     print(extent)
-    return html.Div([
-        html.Div('{} {}'.format(extent.index[0], extent.iloc[0,0]))
-        ])
+    if selected_product == 'monthly-bar':
+        return html.Div([
+                html.Div('10 Lowest Extents for January', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{}'.format(extent.iloc[0,0]), style={'text-align': 'center'})
+                        ],
+                            className='six columns'
+                        ),
+                        html.Div([
+                            html.Div('{}'.format(extent.index[0]), style={'text-align': 'center'})
+                        ],
+                            className='six columns'
+                        ),
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),
+                    
+            ],
+                className='round1'
+            ),
 
 @app.callback(
     Output('year-selector', 'children'),
