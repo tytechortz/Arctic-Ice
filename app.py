@@ -24,7 +24,6 @@ value_range = [0, 365]
 # Read data
 df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 
-
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
 df.set_index('yyyyddd', inplace=True)
@@ -64,7 +63,7 @@ for sea in df.columns.unique():
     sea_options.append({'label':sea, 'value':sea})
 
 # Change dataframe to 5 day trailing average
-df_fdta = df.rolling(window=5).mean()
+# df_fdta = df.rolling(window=5).mean()
 # print(df_fdta['Total Arctic Sea'].iloc[-2])
 
 startyr = 2006
@@ -78,10 +77,8 @@ dayofyear = int(dayofyear)
 arctic = df['Total Arctic Sea']
 years = []
 
-
 year_dict = {}
 keys = []
-
 
 for i in df.index.year.unique():
     keys.append(i)
@@ -91,8 +88,6 @@ def dictionary_maker():
         year_dict[i] = 0
 keys = [str(i) for i in keys]
 dictionary_maker()
-
-
 
 m = 1
 d = 1
@@ -164,16 +159,19 @@ def get_layout():
                     html.Div(
                         id='graph'
                     ),
-                ],
-                    className='eight columns'
-                ),
-                html.Div([
                     html.Div(
                         id='stats'
                     ),
                 ],
-                    className='twelve columns'
+                    className='eight columns'
                 ),
+                # html.Div([
+                #     html.Div(
+                #         id='stats'
+                #     ),
+                # ],
+                #     className='ten columns'
+                # ),
                 html.Div([
                     html.Div([
                         html.Div(id='year-selector'),
@@ -192,19 +190,41 @@ def get_layout():
             ],
                 className='row'
             ),
-            html.Div(id='df-monthly', style={'display': 'none'})
+            html.Div(id='df-monthly', style={'display': 'none'}),
+            html.Div(id='df-fdta', style={'display': 'none'}),
     ])
 
 app.layout = get_layout
 
 @app.callback(
     Output('stats', 'children'),
+    [Input('df-fdta', 'children'),
+    Input('selected-sea', 'children'),
+    Input('product', 'value')])
+def daily_ranking(df_fdta, selected_sea, selected_product):
+    print(selected_sea)
+    df_fdta= pd.read_json(df_fdta)
+    dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
+    print(dr)
+    dr_sea = dr[selected_sea]
+    sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
+    sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
+    sort_dr_sea= sort_dr_sea.round(0)
+    print(sort_dr_sea)
+
+    return html.Div([
+        html.Div('Current Day Ranks', style={'text-align': 'center'}),
+    ],
+        className='round1'
+    ),
+
+@app.callback(
+    Output('df-fdta', 'children'),
     [Input('product', 'value')])
 def display_stats(selected_product):
-    if selected_product == 'extent-stats':
-        return html.Div('Fear This')
-
-
+    df_fdta = df.rolling(window=5).mean()
+    if selected_product == 'extent-stats' or selected_product == 'years-graph':
+        return df_fdta.to_json()
 
 @app.callback(
     Output('bar-stats', 'children'),
@@ -260,10 +280,11 @@ def display_year_selector(product_value):
     Output('sea-selector', 'children'),
     [Input('product', 'value')])
 def display_sea_selector(product_value):
-    if product_value == 'years-graph':
+    if product_value == 'years-graph' or product_value == 'extent-stats':
         return html.P('Select Sea') ,dcc.Dropdown(
             id='selected-sea',
-            options=sea_options,      
+            options=sea_options,
+            value='Total Arctic Sea'      
                 )
 
 @app.callback(
@@ -289,10 +310,13 @@ def display_graph(value):
 @app.callback(
     Output('ice-extent', 'figure'),
     [Input('selected-sea', 'value'),
-    Input('selected-years', 'value')])
-def update_figure(selected_sea, selected_year):
-    # print(selected_year)
+    Input('selected-years', 'value'),
+    Input('df-fdta', 'children')])
+def update_figure(selected_sea, selected_year, df_fdta):
+    
     traces = []
+    df_fdta = pd.read_json(df_fdta)
+    print(df_fdta)
     # selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_year:
         sorted_daily_values=df_fdta[df_fdta.index.year == year]
