@@ -199,6 +199,8 @@ def display_graph_stats(ice, selected_product):
     # df_monthly = df.apply(lambda x: pd.Series(x['data']),axis=1).stack().reset_index(level=1, drop=False)
     # df_monthly.columns = ['Extent', 'Anom']
     extent = df_monthly['data'].apply(pd.Series)
+    extent['value'] = extent['value'].astype(float)
+    extent = extent.sort_values('value')
     print(extent)
     if selected_product == 'monthly-bar':
         return html.Div([
