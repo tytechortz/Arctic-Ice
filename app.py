@@ -104,7 +104,7 @@ def get_layout():
     return html.Div(
         [
             html.Div([
-                html.H4(
+                html.H2(
                     'Arctic Sea Ice Extent',
                     className='twelve columns',
                     style={'text-align': 'center'}
@@ -112,11 +112,104 @@ def get_layout():
             ],
                 className='row'
             ),
+            html.Div([
+                html.H6(
+                    '2006-Present',
+                    className='twelve columns',
+                    style={'text-align': 'center'}
+                ),
+            ],
+                className='row'
+            ),
+            html.Div([
+                html.H6(
+                    'Data From National Snow and Ice Data Center',
+                    className='twelve columns',
+                    style={'text-align': 'center'}
+                ),
+            ],
+                className='row'
+            ),
+            html.Div([
+                html.Div([
+                    html.Label('Select Product'),
+                    dcc.RadioItems(
+                        id='product',
+                        options=[
+                            {'label':'Ice Exent By Year', 'value':'years-graph'},
+                            {'label':'Avg Monthy Extent', 'value':'avg-bar'},
+                        ],
+                        # value='temp-graph',
+                        labelStyle={'display': 'block'},
+                    ),
+                ],
+                    className='three columns',
+                )
+            ],
+                className='row'
+            ),
+            html.Div([
+                html.Div([
+                    html.Div(
+                        id='graph'
+                    ),
+                ],
+                    className='eight columns'
+                ),
+                html.Div(id='year-selector')    
+            ],
+                className='row'
+            ),
+            
 
     ])
 
 app.layout = get_layout
 
+@app.callback(
+    Output('year-selector', 'children'),
+    [Input('product', 'value')])
+def display_year_selector(product_value):
+    if product_value == 'years-graph':
+        return html.P('Select Years') ,dcc.Checklist(
+            options=year_options,
+    # value=[],
+    # labelStyle={'display': 'inline-block'}       
+                )
+
+@app.callback(
+    Output('graph', 'children'),
+    [Input('product', 'value')])
+def display_graph(value):
+    if value == 'years-graph':
+        return dcc.Graph(id='years-ice')
+    elif value == 'avg-bar':
+        return dcc.Graph(id='avg-bar')
+
+
+# @app.callback(
+#     Output('graph', 'children'),
+#     [Input('year', 'value')])
+# def display_graph(value):
+#     print(value)
+#     if value == False:
+#         return html.Div([
+#             html.Div([
+#                 dcc.Graph(id='ice'),
+#             ]),
+            # html.Div([
+            #     dcc.Slider(
+            #         id='rev-map-year',
+            #             min = 2014,
+            #             max = 2018,
+            #             marks={i: '{}'.format(i) for i in range(2014,2019)}, 
+            #             step = 1,
+            #             value = 2014,
+            #             # vertical = False,
+            #             updatemode = 'drag'
+            #         )   
+            # ])
+        # ]) 
 
 
 if __name__ == "__main__":
