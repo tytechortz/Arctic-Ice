@@ -592,9 +592,17 @@ def daily_points_table(max_rows=14):
         # while m < year_count:
         #     rank.loc[rank['Year'] == str(dr_sort.index.year[m]), 'Pts'] += (year_count - m)
         #     m += 1
-        rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 3
-        rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 2
-        rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 1
+        rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 10
+        rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 9
+        rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 8
+        rank.loc[rank['Year'] == str(dr_sort.index.year[3]), 'Pts'] += 7
+        rank.loc[rank['Year'] == str(dr_sort.index.year[4]), 'Pts'] += 6
+        rank.loc[rank['Year'] == str(dr_sort.index.year[5]), 'Pts'] += 5
+        rank.loc[rank['Year'] == str(dr_sort.index.year[6]), 'Pts'] += 4
+        rank.loc[rank['Year'] == str(dr_sort.index.year[7]), 'Pts'] += 3
+        rank.loc[rank['Year'] == str(dr_sort.index.year[8]), 'Pts'] += 2
+        rank.loc[rank['Year'] == str(dr_sort.index.year[9]), 'Pts'] += 1
+       
         rank.sort_values(by=['Pts'], ascending=True)
         x += 1
 
