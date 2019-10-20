@@ -156,7 +156,19 @@ def get_layout():
                 ],
                     className='eight columns'
                 ),
-                html.Div(id='year-selector')    
+                html.Div([
+                    html.Div(id='year-selector'),
+                ],
+                    className='two columns'
+                ),
+                 
+                html.Div([
+                    html.Div(id='sea-selector'),
+                ],
+                    className='two columns'
+                ),
+                   
+                    
             ],
                 className='row'
             ),
@@ -173,6 +185,17 @@ def display_year_selector(product_value):
     if product_value == 'years-graph':
         return html.P('Select Years') ,dcc.Checklist(
             options=year_options,
+    # value=[],
+    # labelStyle={'display': 'inline-block'}       
+                )
+
+@app.callback(
+    Output('sea-selector', 'children'),
+    [Input('product', 'value')])
+def display_year_selector(product_value):
+    if product_value == 'years-graph':
+        return html.P('Select Sea') ,dcc.Dropdown(
+            options=sea_options,
     # value=[],
     # labelStyle={'display': 'inline-block'}       
                 )
