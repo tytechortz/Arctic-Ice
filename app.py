@@ -158,13 +158,6 @@ def get_layout():
                 html.Div([
                     html.Div(
                         id='graph'
-                    ),
-                    html.Div([
-                        html.Div(
-                            id='stats'
-                        ),
-                    ],
-                        className='eight columns'   
                     ), 
                 ],
                     className='eight columns'
@@ -181,6 +174,20 @@ def get_layout():
                     ],
                         className='twelve columns'
                     ),
+                    html.Div([
+                        html.Div(
+                            id='daily-rankings'
+                        ),
+                    ],
+                        className='seven columns'   
+                    ),
+                    html.Div([
+                        html.Div(
+                            id='annual-rankings'
+                        ),
+                    ],
+                        className='four columns'   
+                    ),
                 ],
                     className='four columns'
                 ),
@@ -194,20 +201,65 @@ def get_layout():
 app.layout = get_layout
 
 @app.callback(
-    Output('stats', 'children'),
+    Output('daily-rankings-graph', 'figure'),
+    [Input('product', 'value'),
+    Input('selected-sea', 'value'),
+    Input('df-fdta', 'children')])
+def update_figure_b(selected_product, selected_sea, df_fdta):
+    df_fdta = pd.read_json(df_fdta)
+    print(selected_product)
+    dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
+    print(dr)
+    dr_sea = dr[selected_sea]
+    print(dr_sea)
+    # sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
+    # sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
+    # sort_dr_sea = sort_dr_sea.round(0)
+    print(type(dr_sea))
+    print(dr_sea[1])
+    
+    # trend line
+    # def fit():
+    #     xi = arange(0,len(ice))
+    #     slope, intercept, r_value, p_value, std_err = stats.linregress(xi,ice)
+    #     return (slope*xi+intercept)
+
+    data = [
+        go.Bar(
+            x=dr_sea.index,
+            y=dr_sea
+        ),
+        # go.Scatter(
+        #         x=df_monthly['data'].index,
+        #         y=fit(),
+        #         name='trend',
+        #         line = {'color':'red'}
+        #     ),
+
+    ]
+    layout = go.Layout(
+        xaxis={'title': 'Year'},
+        # yaxis={'title': 'Ice Extent-Million km2', 'range':[(min(ice)-1),(max(ice)+1)]},
+        # title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
+        plot_bgcolor = 'lightgray',
+    )
+    return {'data': data, 'layout': layout}
+
+@app.callback(
+    Output('daily-rankings', 'children'),
     [Input('df-fdta', 'children'),
     Input('selected-sea', 'value'),
     Input('product', 'value')])
 def daily_ranking(df_fdta, selected_sea, selected_product):
     print(selected_sea)
-    df_fdta= pd.read_json(df_fdta)
+    df_fdta = pd.read_json(df_fdta)
     dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
-    print(dr)
+    # print(dr)
     dr_sea = dr[selected_sea]
     sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
     sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
-    sort_dr_sea= sort_dr_sea.round(0)
-    print(sort_dr_sea)
+    sort_dr_sea = sort_dr_sea.round(0)
+    # print(sort_dr_sea)
     if selected_product == 'extent-stats':
         return html.Div([
                 html.Div('Current Day Ranks', style={'text-align': 'center'}),
@@ -219,7 +271,64 @@ def daily_ranking(df_fdta, selected_sea, selected_product):
                             className='eight columns'
                         ),
                         html.Div([
-                            html.Div('{}'.format(sort_dr_sea.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
+                            html.Div('{:,.0f}'.format(sort_dr_sea.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
+                        ],
+                            className='four columns'
+                        ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
+            ],
+                className='round1'
+            )
+
+@app.callback(
+    Output('annual-rankings', 'children'),
+    [Input('product', 'value')])
+def annual_ranking(selected_product):
+    df1 = df['Total Arctic Sea']
+
+    x = 0
+
+    rankings = [['2006', 0],['2007', 0],['2008', 0],['2009', 0],['2010', 0],['2011', 0],['2012', 0],['2013', 0],['2014', 0],['2015', 0],['2016', 0],['2017', 0],['2018', 0],['2019', 0]]
+    rank = pd.DataFrame(rankings, columns = ['Year','Pts'])
+    
+    while x < 366:
+        dr1 = df1[(df1.index.month == df1.index[x].month) & (df1.index.day == df1.index[x].day)]
+        dr_sort = dr1.sort_values(axis=0, ascending=True)
+    
+        rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 10
+        rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 9
+        rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 8
+        rank.loc[rank['Year'] == str(dr_sort.index.year[3]), 'Pts'] += 7
+        rank.loc[rank['Year'] == str(dr_sort.index.year[4]), 'Pts'] += 6
+        rank.loc[rank['Year'] == str(dr_sort.index.year[5]), 'Pts'] += 5
+        rank.loc[rank['Year'] == str(dr_sort.index.year[6]), 'Pts'] += 4
+        rank.loc[rank['Year'] == str(dr_sort.index.year[7]), 'Pts'] += 3
+        rank.loc[rank['Year'] == str(dr_sort.index.year[8]), 'Pts'] += 2
+        rank.loc[rank['Year'] == str(dr_sort.index.year[9]), 'Pts'] += 1
+       
+        rank.sort_values(by=['Pts'], ascending=True)
+        x += 1
+
+    sorted_rank = rank.sort_values('Pts', ascending=False)
+    # print(rank)
+
+    if selected_product == 'extent-stats':
+        return html.Div([
+                html.Div('Annual Ranks', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{}'.format(sorted_rank.iloc[y][0]), style={'text-align': 'center'}) for y in range(0,14)
+                        ],
+                            className='eight columns'
+                        ),
+                        html.Div([
+                            html.Div('{:,}'.format(sorted_rank.iloc[y,1]), style={'text-align': 'left'}) for y in range(0,14)
                         ],
                             className='four columns'
                         ),  
@@ -297,8 +406,8 @@ def display_sea_selector(product_value):
         return html.P('Select Sea') ,dcc.Dropdown(
             id='selected-sea',
             options=sea_options,
-            # value='Total Arctic Sea'      
-                )
+            value='Total Arctic Sea'      
+            )
 
 @app.callback(
     Output('month-selector', 'children'),
@@ -319,6 +428,11 @@ def display_graph(value):
         return dcc.Graph(id='ice-extent')
     elif value == 'monthly-bar':
         return dcc.Graph(id='monthly-bar')
+    elif value == 'extent-stats':
+        return dcc.Graph(id='daily-rankings-graph')
+
+
+
 
 @app.callback(
     Output('ice-extent', 'figure'),
@@ -352,7 +466,7 @@ def update_figure(selected_sea, selected_year, df_fdta):
     Output('monthly-bar', 'figure'),
     Output('df-monthly', 'children')],
     [Input('month', 'value')])
-def update_figure_b(month_value):
+def update_figure_c(month_value):
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
     df_monthly = df_monthly.iloc[5:]
     ice = []
