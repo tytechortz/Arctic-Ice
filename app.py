@@ -144,7 +144,12 @@ def get_layout():
                     ),
                 ],
                     className='three columns',
-                )
+                ),
+                html.Div([
+                    html.Div(id='sea-selector'),
+                ],
+                    className='two columns'
+                ),
             ],
                 className='row'
             ),
@@ -161,14 +166,6 @@ def get_layout():
                 ],
                     className='two columns'
                 ),
-                 
-                html.Div([
-                    html.Div(id='sea-selector'),
-                ],
-                    className='two columns'
-                ),
-                   
-                    
             ],
                 className='row'
             ),
