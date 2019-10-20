@@ -65,7 +65,7 @@ for sea in df.columns.unique():
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
-print(df_fdta['Total Arctic Sea'].iloc[-2])
+# print(df_fdta['Total Arctic Sea'].iloc[-2])
 
 startyr = 2006
 presentyr = datetime.now().year
@@ -171,14 +171,35 @@ def get_layout():
                 ],
                     className='two columns'
                 ),
+                html.Div([
+                    html.Div([
+                        html.Div(id='bar-stats'
+                        ),
+                    ],
+                    ),
+                ]),
             ],
                 className='row'
             ),
-            
-
+            html.Div(id='df-monthly', style={'display': 'none'}),
     ])
 
 app.layout = get_layout
+
+@app.callback(
+    Output('bar-stats', 'children'),
+    [Input('df-monthly', 'children'),
+    Input('product','value')])
+def display_graph_stats(ice, selected_product):
+    df_monthly = pd.read_json(ice)
+    # print(df_monthly)
+    # df_monthly = df.apply(lambda x: pd.Series(x['data']),axis=1).stack().reset_index(level=1, drop=False)
+    # df_monthly.columns = ['Extent', 'Anom']
+    extent = df_monthly['data'].apply(pd.Series)
+    print(extent)
+    return html.Div([
+        html.Div('{} {}'.format(extent.index[0], extent.iloc[0,0]))
+        ])
 
 @app.callback(
     Output('year-selector', 'children'),
@@ -225,7 +246,7 @@ def display_graph(value):
     [Input('selected-sea', 'value'),
     Input('selected-years', 'value')])
 def update_figure(selected_sea, selected_year):
-    print(selected_year)
+    # print(selected_year)
     traces = []
     # selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_year:
@@ -245,8 +266,9 @@ def update_figure(selected_sea, selected_year):
                 )  
     }
 
-@app.callback(
+@app.callback([
     Output('monthly-bar', 'figure'),
+    Output('df-monthly', 'children')],
     [Input('month', 'value')])
 def update_figure_b(month_value):
     df_monthly = pd.read_json('https://www.ncdc.noaa.gov/snow-and-ice/extent/sea-ice/N/' + str(month_value) + '.json')
@@ -256,6 +278,7 @@ def update_figure_b(month_value):
         ice.append(df_monthly['data'][i]['value'])
     ice = [14.42 if x == -9999 else x for x in ice]
     ice = list(map(float, ice))
+    
     
     # trend line
     def fit():
@@ -282,7 +305,7 @@ def update_figure_b(month_value):
         title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
         plot_bgcolor = 'lightgray',
     )
-    return {'data': data, 'layout': layout} 
+    return {'data': data, 'layout': layout}, df_monthly.to_json()
 
 # @app.callback(
 #     Output('graph', 'children'),
