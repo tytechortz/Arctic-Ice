@@ -209,38 +209,40 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
     df_fdta = pd.read_json(df_fdta)
     print(selected_product)
     dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
-    print(dr)
     dr_sea = dr[selected_sea]
+    dr_sea.index = dr_sea.index.strftime('%Y-%m-%d')
+    
     print(dr_sea)
     # sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
     # sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
     # sort_dr_sea = sort_dr_sea.round(0)
     print(type(dr_sea))
-    print(dr_sea[1])
+    
     
     # trend line
-    # def fit():
-    #     xi = arange(0,len(ice))
-    #     slope, intercept, r_value, p_value, std_err = stats.linregress(xi,ice)
-    #     return (slope*xi+intercept)
+    def fit():
+        xi = arange(0,len(dr_sea))
+        slope, intercept, r_value, p_value, std_err = stats.linregress(xi,dr_sea)
+        return (slope*xi+intercept)
 
     data = [
         go.Bar(
             x=dr_sea.index,
-            y=dr_sea
+            y=dr_sea,
+            name=('Extent')
         ),
-        # go.Scatter(
-        #         x=df_monthly['data'].index,
-        #         y=fit(),
-        #         name='trend',
-        #         line = {'color':'red'}
-        #     ),
+        go.Scatter(
+                x=dr_sea.index,
+                y=fit(),
+                name='trend',
+                line = {'color':'red'}
+            ),
 
     ]
     layout = go.Layout(
         xaxis={'title': 'Year'},
-        # yaxis={'title': 'Ice Extent-Million km2', 'range':[(min(ice)-1),(max(ice)+1)]},
-        # title='{} Avg Ice Extent'.format(month_options[int(month_value)- 1]['label']),
+        yaxis={'title': 'Ice Extent-Million km2')},
+        title='{} Values on {}'.format(selected_sea, dr_sea.index[-1]),
         plot_bgcolor = 'lightgray',
     )
     return {'data': data, 'layout': layout}
@@ -262,7 +264,7 @@ def daily_ranking(df_fdta, selected_sea, selected_product):
     # print(sort_dr_sea)
     if selected_product == 'extent-stats':
         return html.Div([
-                html.Div('Current Day Ranks', style={'text-align': 'center'}),
+                html.Div('Current Day Values', style={'text-align': 'center'}),
                 html.Div([
                     html.Div([
                         html.Div([

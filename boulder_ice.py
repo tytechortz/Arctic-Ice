@@ -79,10 +79,8 @@ dayofyear = int(dayofyear)
 arctic = df['Total Arctic Sea']
 years = []
 
-
 year_dict = {}
 keys = []
-
 
 for i in df.index.year.unique():
     keys.append(i)
@@ -92,8 +90,6 @@ def dictionary_maker():
         year_dict[i] = 0
 keys = [str(i) for i in keys]
 dictionary_maker()
-
-
 
 m = 1
 d = 1
