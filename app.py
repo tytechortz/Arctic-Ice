@@ -408,11 +408,16 @@ def display_year_selector(product_value):
     [Input('product', 'value')])
 def display_sea_selector(product_value):
     if product_value == 'years-graph' or product_value == 'extent-stats':
-        return html.P('Select Sea') ,dcc.Dropdown(
+        return html.P('Select Sea') , html.Div([
+            dcc.Dropdown(
             id='selected-sea',
             options=sea_options,
             value='Total Arctic Sea'      
             )
+        ],
+            className='pretty_container'
+        
+        )
 
 @app.callback(
     Output('month-selector', 'children'),
