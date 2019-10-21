@@ -394,10 +394,14 @@ def display_graph_stats(ice, selected_product):
     [Input('product', 'value')])
 def display_year_selector(product_value):
     if product_value == 'years-graph':
-        return html.P('Select Years') ,dcc.Checklist(
+        return html.P('Select Years') , html.Div([
+            dcc.Checklist(
             id='selected-years',
             options=year_options,       
-                )
+            )
+        ],
+            className='pretty_container'
+        )
 
 @app.callback(
     Output('sea-selector', 'children'),
