@@ -439,27 +439,29 @@ def display_graph(value):
     Input('df-fdta', 'children')])
 def update_current_stats(selected_sea, selected_product, df_fdta):
     df_fdta = pd.read_json(df_fdta)
+    current_value = df_fdta[selected_sea][-1]
+    print(df_fdta)
     if selected_product == 'years-graph':
         return html.Div([
-                html.Div('10 Lowest Extents for Selected Month', style={'text-align': 'center'}),
-                # html.Div([
-                #     html.Div([
-                #         html.Div([
-                #             html.Div('{}'.format(extent.index[i]), style={'text-align': 'center'}) for i in range(10)
-                #         ],
-                #             className='eight columns'
-                #         ),
-                #         html.Div([
-                #             html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
-                #         ],
-                #             className='four columns'
-                #         ),  
-                #     ],
-                #         className='row'
-                #     ),
-                # ],
-                #     className='round1'
-                # ),      
+                html.Div('Current Extent', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{:,.0f}'.format(current_value), style={'text-align': 'center'}) 
+                        ],
+                            className='twelve columns'
+                        ),
+                    #     html.Div([
+                    #         html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
+                    #     ],
+                    #         className='four columns'
+                    #     ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
             ],
                 className='round1'
             ),
