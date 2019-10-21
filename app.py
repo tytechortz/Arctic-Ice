@@ -169,6 +169,12 @@ def get_layout():
                         className='four columns'
                     ),
                     html.Div([
+                        html.Div(id='current-stats'
+                        ),
+                    ],
+                        className='four columns'
+                    ),
+                    html.Div([
                         html.Div(id='bar-stats'
                         ),
                     ],
@@ -212,13 +218,6 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
     dr_sea = dr[selected_sea]
     dr_sea.index = dr_sea.index.strftime('%Y-%m-%d')
     
-    print(dr_sea)
-    # sort_dr_sea = dr_sea.sort_values(axis=0, ascending=True)
-    # sort_dr_sea = pd.DataFrame({'km2':sort_dr_sea.values, 'YEAR':sort_dr_sea.index.year})
-    # sort_dr_sea = sort_dr_sea.round(0)
-    print(type(dr_sea))
-    
-    
     # trend line
     def fit():
         xi = arange(0,len(dr_sea))
@@ -241,7 +240,7 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
     ]
     layout = go.Layout(
         xaxis={'title': 'Year'},
-        yaxis={'title': 'Ice Extent-Million km2')},
+        yaxis={'title': 'Ice Extent-Million km2'},
         title='{} Values on {}'.format(selected_sea, dr_sea.index[-1]),
         plot_bgcolor = 'lightgray',
     )
@@ -358,6 +357,7 @@ def display_stats(selected_product):
     Input('product','value')])
 def display_graph_stats(ice, selected_product):
     df_monthly = pd.read_json(ice)
+    print(df_monthly)
     extent = df_monthly['data'].apply(pd.Series)
     extent['value'] = extent['value'].astype(float)
     extent = extent.sort_values('value')
@@ -367,7 +367,7 @@ def display_graph_stats(ice, selected_product):
 
     if selected_product == 'monthly-bar':
         return html.Div([
-                html.Div('10 Lowest Extents for January', style={'text-align': 'center'}),
+                html.Div('10 Lowest Extents for Selected Month', style={'text-align': 'center'}),
                 html.Div([
                     html.Div([
                         html.Div([
