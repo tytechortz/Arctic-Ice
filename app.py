@@ -166,13 +166,13 @@ def get_layout():
                     html.Div([
                         html.Div(id='year-selector'),
                     ],
-                        className='four columns'
+                        className='three columns'
                     ),
                     html.Div([
                         html.Div(id='current-stats'
                         ),
                     ],
-                        className='four columns'
+                        className='nine columns'
                     ),
                     html.Div([
                         html.Div(id='bar-stats'
@@ -205,6 +205,8 @@ def get_layout():
     ])
 
 app.layout = get_layout
+
+
 
 @app.callback(
     Output('daily-rankings-graph', 'figure'),
@@ -357,13 +359,10 @@ def display_stats(selected_product):
     Input('product','value')])
 def display_graph_stats(ice, selected_product):
     df_monthly = pd.read_json(ice)
-    print(df_monthly)
     extent = df_monthly['data'].apply(pd.Series)
     extent['value'] = extent['value'].astype(float)
     extent = extent.sort_values('value')
     extent = extent[extent.value != -9999]
-    print(extent)
-    print(extent.iloc[0,0])
 
     if selected_product == 'monthly-bar':
         return html.Div([
@@ -433,8 +432,37 @@ def display_graph(value):
     elif value == 'extent-stats':
         return dcc.Graph(id='daily-rankings-graph')
 
-
-
+@app.callback(
+    Output('current-stats', 'children'),
+    [Input('selected-sea', 'value'),
+    Input('product', 'value'),
+    Input('df-fdta', 'children')])
+def update_current_stats(selected_sea, selected_product, df_fdta):
+    df_fdta = pd.read_json(df_fdta)
+    if selected_product == 'years-graph':
+        return html.Div([
+                html.Div('10 Lowest Extents for Selected Month', style={'text-align': 'center'}),
+                # html.Div([
+                #     html.Div([
+                #         html.Div([
+                #             html.Div('{}'.format(extent.index[i]), style={'text-align': 'center'}) for i in range(10)
+                #         ],
+                #             className='eight columns'
+                #         ),
+                #         html.Div([
+                #             html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
+                #         ],
+                #             className='four columns'
+                #         ),  
+                #     ],
+                #         className='row'
+                #     ),
+                # ],
+                #     className='round1'
+                # ),      
+            ],
+                className='round1'
+            ),
 
 @app.callback(
     Output('ice-extent', 'figure'),
@@ -442,10 +470,8 @@ def display_graph(value):
     Input('selected-years', 'value'),
     Input('df-fdta', 'children')])
 def update_figure(selected_sea, selected_year, df_fdta):
-    
     traces = []
     df_fdta = pd.read_json(df_fdta)
-    print(df_fdta)
     # selected_years = [selected_year1,selected_year2,selected_year3,selected_year4]
     for year in selected_year:
         sorted_daily_values=df_fdta[df_fdta.index.year == year]
@@ -476,7 +502,6 @@ def update_figure_c(month_value):
         ice.append(df_monthly['data'][i]['value'])
     ice = [14.42 if x == -9999 else x for x in ice]
     ice = list(map(float, ice))
-    
     
     # trend line
     def fit():
