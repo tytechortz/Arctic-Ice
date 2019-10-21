@@ -128,7 +128,8 @@ def get_layout():
             html.Div([
                 html.Div([
                     html.Label('Select Product'),
-                    dcc.RadioItems(
+                    html.Div([
+                        dcc.RadioItems(
                         id='product',
                         options=[
                             {'label':'Ice Exent By Year', 'value':'years-graph'},
@@ -138,6 +139,10 @@ def get_layout():
                         # value='temp-graph',
                         labelStyle={'display': 'block'},
                     ),
+                    ],
+                        className='pretty_container'
+                    ),
+                    
                 ],
                     className='three columns',
                 ),
