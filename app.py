@@ -362,12 +362,29 @@ def record_ice_table(selected_sea, selected_value, df_fdta, max_rows=10):
    
     sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
     sama = sama.round(0)
-    return html.Table (
-        [html.Tr([
-            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
-            html.Td(sama.iloc[i][1])
-            ]) for i in range(min(len(sama), max_rows))]
-    )
+    return html.Div([
+                html.Div('Annual Max', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
+                        ],
+                            className='eight columns'
+                        ),
+                        html.Div([
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'left'}) for y in range(0,14)
+                        ],
+                            className='four columns'
+                        ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
+            ],
+                className='round1'
+            )
 
 @app.callback(
     Output('annual-min-table', 'children'),
