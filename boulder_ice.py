@@ -66,7 +66,7 @@ for sea in df.columns.unique():
 
 # Change dataframe to 5 day trailing average
 df_fdta = df.rolling(window=5).mean()
-print(df_fdta['Total Arctic Sea'].iloc[-2])
+# print(df_fdta['Total Arctic Sea'].iloc[-2])
 
 startyr = 2006
 presentyr = datetime.now().year
@@ -353,7 +353,7 @@ def update_figure_b(month_value):
         ice.append(df_monthly['data'][i]['value'])
     ice = [14.42 if x == -9999 else x for x in ice]
     ice = list(map(float, ice))
-    print(ice)
+    # print(ice)
     # trend line
     def fit():
         xi = arange(0,len(ice))
@@ -527,6 +527,7 @@ def update_figure_a(selected_sea):
     Output('annual-max-table', 'children'),
     [Input('sea', 'value')])
 def record_ice_table(selected_sea, max_rows=10):
+    print(df_fdta)
     annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
     sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
    

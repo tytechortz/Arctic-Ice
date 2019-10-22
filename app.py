@@ -247,9 +247,19 @@ def display_stats(value):
         return html.Div([
                 html.Div([
                     html.Div([
+                        html.Div(id='annual-max-table')
+                    ],
+                        className='three columns'
+                    ),
+                    html.Div([
+                        html.Div(id='annual-min-table')
+                    ],
+                        className='three columns'
+                    ),
+                    html.Div([
                         html.Div(id='annual-rankings')
                     ],
-                        className='four columns'
+                        className='three columns'
                     ),
                 ])
         ],
@@ -338,6 +348,43 @@ def daily_ranking(df_fdta, selected_sea, selected_product):
             ),
     # else:
     #     return None
+
+@app.callback(
+    Output('annual-max-table', 'children'),
+    [Input('selected-sea', 'value'),
+    Input('product', 'value'),
+    Input('df-fdta', 'children')])
+def record_ice_table(selected_sea, selected_value, df_fdta, max_rows=10):
+    df_fdta = pd.read_json(df_fdta)
+    print(df_fdta)
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
+   
+    sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
+    sama = sama.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
+            html.Td(sama.iloc[i][1])
+            ]) for i in range(min(len(sama), max_rows))]
+    )
+
+@app.callback(
+    Output('annual-min-table', 'children'),
+    [Input('selected-sea', 'value'),
+    Input('df-fdta', 'children')])
+def record_ice_table_a(selected_sea, df_fdta, max_rows=10):
+    df_fdta = pd.read_json(df_fdta)
+    annual_min_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmin().iloc[:, 0]]
+    sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=True)
+    sama = pd.DataFrame({'Extent km2':sorted_annual_min_all.values,'YEAR':sorted_annual_min_all.index.year})
+    sama = sama.round(0)
+    return html.Table (
+        [html.Tr([
+            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
+            html.Td(sama.iloc[i][1])
+            ]) for i in range(min(len(sama), max_rows))]
+    )
 
 @app.callback(
     Output('annual-rankings', 'children'),
@@ -467,7 +514,7 @@ def display_year_selector(product_value):
     Output('sea-selector', 'children'),
     [Input('product', 'value')])
 def display_sea_selector(product_value):
-    if product_value == 'years-graph' or product_value == 'extent-date':
+    if product_value == 'years-graph' or product_value == 'extent-date' or product_value == 'extent-stats':
         return html.P('Select Sea', style={'text-align': 'center'}) , html.Div([
             dcc.Dropdown(
                 id='selected-sea',
@@ -518,7 +565,7 @@ def update_current_stats(selected_sea, selected_product, df_fdta):
     record_min = df_fdta[selected_sea].min()
     record_min_difference = today_value - record_min
     record_low_max = df_fdta[selected_sea].min()
-    record_min_difference = today_value - record_min
+    record_max_difference = today_value - record_low_max
     print(selected_product)
     if selected_product == 'years-graph':
         return html.Div([
