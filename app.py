@@ -134,6 +134,7 @@ def get_layout():
                         options=[
                             {'label':'Ice Exent By Year', 'value':'years-graph'},
                             {'label':'Avg Monthy Extent', 'value':'monthly-bar'},
+                            {'label':'Extent for Date', 'value':'extent-date'},
                             {'label':'Extent Stats', 'value':'extent-stats'},
                         ],
                         # value='temp-graph',
@@ -174,6 +175,17 @@ def get_layout():
             ],
                 className='row'
             ),
+            html.Div([
+                html.Div([
+                    html.Div(
+                        id='stats'
+                    ), 
+                ],
+                    className='eight columns'
+                ),
+            ],
+                className='row'
+            ),
             
             html.Div(id='df-monthly', style={'display': 'none'}),
             html.Div(id='df-fdta', style={'display': 'none'}),
@@ -210,16 +222,11 @@ def stats_n_stuff(product):
         ],
             className='twelve columns'
         ),
-    elif product == 'extent-stats':
+    elif product == 'extent-date':
         return html.Div([
             html.Div([
                 html.Div([
-                    html.Div(id='extent-stats')
-                ],
-                    className='seven columns'
-                ),
-                html.Div([
-                    html.Div(id='annual-rankings')
+                    html.Div(id='extent-date')
                 ],
                     className='seven columns'
                 ),
@@ -232,12 +239,30 @@ def stats_n_stuff(product):
         ),
 
 @app.callback(
+    Output('stats', 'children'),
+    [Input('product', 'value')])
+def display_stats(value):
+    print(value)
+    if value == 'extent-stats':
+        return html.Div([
+                html.Div([
+                    html.Div([
+                        html.Div(id='annual-rankings')
+                    ],
+                        className='four columns'
+                    ),
+                ])
+        ],
+            className='twelve columns'
+        ),
+
+@app.callback(
     Output('daily-rankings-graph', 'figure'),
     [Input('product', 'value'),
     Input('selected-sea', 'value'),
     Input('df-fdta', 'children')])
 def update_figure_b(selected_product, selected_sea, df_fdta):
-    if selected_product == 'extent-stats':
+    if selected_product == 'extent-date':
         df_fdta = pd.read_json(df_fdta)
         print(selected_product)
         dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
@@ -272,12 +297,12 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
         return {'data': data, 'layout': layout}
 
 @app.callback(
-    Output('extent-stats', 'children'),
+    Output('extent-date', 'children'),
     [Input('df-fdta', 'children'),
     Input('selected-sea', 'value'),
     Input('product', 'value')])
 def daily_ranking(df_fdta, selected_sea, selected_product):
-    if selected_product == 'extent-stats':
+    if selected_product == 'extent-date':
         print(selected_sea)
         df_fdta = pd.read_json(df_fdta)
         dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
@@ -376,9 +401,9 @@ def annual_ranking(selected_product):
 @app.callback(
     Output('df-fdta', 'children'),
     [Input('product', 'value')])
-def display_stats(selected_product):
+def clean_fdta(selected_product):
     df_fdta = df.rolling(window=5).mean()
-    if selected_product == 'years-graph' or selected_product == 'extent-stats':
+    if selected_product == 'years-graph' or selected_product == 'extent-stats' or selected_product == 'extent-date':
         return df_fdta.to_json()
 
 @app.callback(
@@ -442,7 +467,7 @@ def display_year_selector(product_value):
     Output('sea-selector', 'children'),
     [Input('product', 'value')])
 def display_sea_selector(product_value):
-    if product_value == 'years-graph' or product_value == 'extent-stats':
+    if product_value == 'years-graph' or product_value == 'extent-date':
         return html.P('Select Sea', style={'text-align': 'center'}) , html.Div([
             dcc.Dropdown(
                 id='selected-sea',
@@ -476,7 +501,7 @@ def display_graph(value):
         return dcc.Graph(id='ice-extent')
     elif value == 'monthly-bar':
         return dcc.Graph(id='monthly-bar')
-    elif value == 'extent-stats':
+    elif value == 'extent-date':
         return dcc.Graph(id='daily-rankings-graph')
 
 @app.callback(
@@ -486,15 +511,21 @@ def display_graph(value):
     Input('df-fdta', 'children')])
 def update_current_stats(selected_sea, selected_product, df_fdta):
     df_fdta = pd.read_json(df_fdta)
-    current_value = df_fdta[selected_sea][-1]
-    daily_change = current_value - df_fdta[selected_sea][-2]
+    today_value = df_fdta[selected_sea][-1]
+    daily_change = today_value - df_fdta[selected_sea][-2]
+    week_ago_value = df_fdta[selected_sea].iloc[-7]
+    weekly_change = today_value - week_ago_value
+    record_min = df_fdta[selected_sea].min()
+    record_min_difference = today_value - record_min
+    record_low_max = df_fdta[selected_sea].min()
+    record_min_difference = today_value - record_min
     print(selected_product)
     if selected_product == 'years-graph':
         return html.Div([
                     html.Div('Current Extent', style={'text-align': 'center'}),
                     html.Div([
                         html.Div([
-                            html.Div('{:,.0f}'.format(current_value), style={'text-align': 'center'}), 
+                            html.Div('{:,.0f}'.format(today_value), style={'text-align': 'center'}), 
                         ],
                             className='round1'
                         ),  
@@ -508,13 +539,41 @@ def update_current_stats(selected_sea, selected_product, df_fdta):
                                 className='round1'
                             ),  
                         ]),      
+                    ]),
+                    html.Div([
+                        html.Div('Weekly Change', style={'text-align': 'center'}),
+                        html.Div([
+                            html.Div([
+                                html.Div('{:,.0f}'.format(weekly_change), style={'text-align': 'center'}), 
+                            ],
+                                className='round1'
+                            ),  
+                        ]),      
+                    ]),
+                    html.Div([
+                        html.Div('Diff From Rec Low Min', style={'text-align': 'center'}),
+                        html.Div([
+                            html.Div([
+                                html.Div('{:,.0f}'.format(record_min_difference), style={'text-align': 'center'}), 
+                            ],
+                                className='round1'
+                            ),  
+                        ]),      
+                    ]),
+                    html.Div([
+                        html.Div('Diff From Rec Low Max', style={'text-align': 'center'}),
+                        html.Div([
+                            html.Div([
+                                html.Div('{:,.0f}'.format(record_min_difference), style={'text-align': 'center'}), 
+                            ],
+                                className='round1'
+                            ),  
+                        ]),      
                     ]),      
                 ],
                     className='round1'
                 ),
                     
-            
-
 @app.callback(
     Output('ice-extent', 'figure'),
     [Input('selected-sea', 'value'),
