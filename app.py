@@ -181,7 +181,7 @@ def get_layout():
                         id='stats'
                     ), 
                 ],
-                    className='eight columns'
+                    className='twelve columns'
                 ),
             ],
                 className='row'
@@ -396,12 +396,29 @@ def record_ice_table_a(selected_sea, df_fdta, max_rows=10):
     sorted_annual_min_all = annual_min_all.sort_values(axis=0, ascending=True)
     sama = pd.DataFrame({'Extent km2':sorted_annual_min_all.values,'YEAR':sorted_annual_min_all.index.year})
     sama = sama.round(0)
-    return html.Table (
-        [html.Tr([
-            html.Td(sama.iloc[i].map('{:,.0f}'.format)[0]),
-            html.Td(sama.iloc[i][1])
-            ]) for i in range(min(len(sama), max_rows))]
-    )
+    return html.Div([
+                html.Div('Annual Min', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
+                        ],
+                            className='eight columns'
+                        ),
+                        html.Div([
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'left'}) for y in range(0,14)
+                        ],
+                            className='four columns'
+                        ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
+            ],
+                className='round1'
+            )
 
 @app.callback(
     Output('annual-rankings', 'children'),
@@ -575,13 +592,15 @@ def display_graph(value):
     Input('df-fdta', 'children')])
 def update_current_stats(selected_sea, selected_product, df_fdta):
     df_fdta = pd.read_json(df_fdta)
+    annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
+    sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
     today_value = df_fdta[selected_sea][-1]
     daily_change = today_value - df_fdta[selected_sea][-2]
     week_ago_value = df_fdta[selected_sea].iloc[-7]
     weekly_change = today_value - week_ago_value
     record_min = df_fdta[selected_sea].min()
     record_min_difference = today_value - record_min
-    record_low_max = df_fdta[selected_sea].min()
+    record_low_max = sorted_annual_max_all[-1]
     record_max_difference = today_value - record_low_max
     print(selected_product)
     if selected_product == 'years-graph':
@@ -628,7 +647,7 @@ def update_current_stats(selected_sea, selected_product, df_fdta):
                         html.Div('Diff From Rec Low Max', style={'text-align': 'center'}),
                         html.Div([
                             html.Div([
-                                html.Div('{:,.0f}'.format(record_min_difference), style={'text-align': 'center'}), 
+                                html.Div('{:,.0f}'.format(record_max_difference), style={'text-align': 'center'}), 
                             ],
                                 className='round1'
                             ),  
@@ -703,31 +722,6 @@ def update_figure_c(month_value):
         plot_bgcolor = 'lightgray',
     )
     return {'data': data, 'layout': layout}, df_monthly.to_json()
-
-# @app.callback(
-#     Output('graph', 'children'),
-#     [Input('year', 'value')])
-# def display_graph(value):
-#     print(value)
-#     if value == False:
-#         return html.Div([
-#             html.Div([
-#                 dcc.Graph(id='ice'),
-#             ]),
-            # html.Div([
-            #     dcc.Slider(
-            #         id='rev-map-year',
-            #             min = 2014,
-            #             max = 2018,
-            #             marks={i: '{}'.format(i) for i in range(2014,2019)}, 
-            #             step = 1,
-            #             value = 2014,
-            #             # vertical = False,
-            #             updatemode = 'drag'
-            #         )   
-            # ])
-        # ]) 
-
 
 if __name__ == "__main__":
     app.run_server(port=8050, debug=False)
