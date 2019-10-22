@@ -142,7 +142,6 @@ def get_layout():
                     ],
                         className='pretty_container'
                     ),
-                    
                 ],
                     className='three columns',
                 ),
@@ -171,84 +170,10 @@ def get_layout():
                     html.Div(id='stats-n-stuff')
                 ],
                     className='four columns'
-                ),
-                # html.Div([
-                #     html.Div([
-                #         html.Div([
-                #             html.Div(id='year-selector')
-                #         ],
-                #             className='three columns'
-                #         ),
-                #         html.Div([
-                #             html.Div(id='current-stats')
-                #         ],
-                #             className='eight columns'
-                #         ),
-                #     ],
-                #         className='twelve columns'
-                #     ),
-                #     # html.Div([
-                #         html.Div([
-                #             html.Div(id='monthly-bar-stats')
-                #         ],
-                #             className='twelve columns'
-                #         ),
-                #         html.Div([
-                #             html.Div(id='extent-stats'),
-                #         ],
-                #             className='seven columns'
-                #         ),
-                # ],
-                #     className='four columns'
-                # ),
-                
+                ), 
             ],
                 className='row'
             ),
-                # html.Div([
-                #     html.Div([
-                #         html.Div(id='years-graph-stuff'
-                #         [
-                #             html.Div(id='year-selector'
-                #         ),
-                #         ],
-                #             className='three columns'
-                #         ),
-                #             html.Div([
-                #                 html.Div(id='current-stats'
-                #                 ),
-                #             ],
-                #                 className='seven columns'
-                #             ),
-                #     ],
-                #         className='four columns'
-                #     ),
-                #     html.Div([
-                #         html.Div(id='extent-stats-stuff'
-                #         [
-                #             html.Div(id='extent-stats'
-                #             ),
-                #         ],
-                #             className='seven columns'
-                #             ),
-                #             html.Div(id='annual-rankings'
-                #             ),
-                #         ],
-                #             className='four columns'
-                #     html.Div([
-                #         html.Div('monthly-bar-stuff'
-                #         [
-                            
-                #             ),
-                #     ])
-                    
-                #     html.Div([
-                #         html.Div(id='monthly-bar-stats'),
-                #     ],
-                #         className='seven columns'),
-                # ],
-                #     className='four columns'
-                # ),
             
             html.Div(id='df-monthly', style={'display': 'none'}),
             html.Div(id='df-fdta', style={'display': 'none'}),
@@ -562,31 +487,33 @@ def display_graph(value):
 def update_current_stats(selected_sea, selected_product, df_fdta):
     df_fdta = pd.read_json(df_fdta)
     current_value = df_fdta[selected_sea][-1]
+    daily_change = current_value - df_fdta[selected_sea][-2]
     print(selected_product)
     if selected_product == 'years-graph':
         return html.Div([
-                html.Div('Current Extent', style={'text-align': 'center'}),
-                html.Div([
+                    html.Div('Current Extent', style={'text-align': 'center'}),
                     html.Div([
                         html.Div([
-                            html.Div('{:,.0f}'.format(current_value), style={'text-align': 'center'}) 
+                            html.Div('{:,.0f}'.format(current_value), style={'text-align': 'center'}), 
                         ],
-                            className='twelve columns'
-                        ),
-                        # html.Div([
-                        #     html.Div('{}'.format(extent.iloc[i,0]), style={'text-align': 'left'}) for i in range(10)
-                        # ],
-                        #     className='four columns'
-                        # ),  
-                    ],
-                        className='row'
-                    ),
+                            className='round1'
+                        ),  
+                    ]),
+                    html.Div([
+                        html.Div('Daily Change', style={'text-align': 'center'}),
+                        html.Div([
+                            html.Div([
+                                html.Div('{:,.0f}'.format(daily_change), style={'text-align': 'center'}), 
+                            ],
+                                className='round1'
+                            ),  
+                        ]),      
+                    ]),      
                 ],
                     className='round1'
-                ),      
-            ],
-                className='round1'
-            ), 
+                ),
+                    
+            
 
 @app.callback(
     Output('ice-extent', 'figure'),
