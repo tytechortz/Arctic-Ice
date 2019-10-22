@@ -284,7 +284,27 @@ def stats_n_stuff(product):
             )
         ],
             className='twelve columns'
-        )
+        ),
+    elif product == 'extent-stats':
+        return html.Div([
+            html.Div([
+                html.Div([
+                    html.Div(id='extent-stats')
+                ],
+                    className='seven columns'
+                ),
+                html.Div([
+                    html.Div(id='annual-rankings')
+                ],
+                    className='seven columns'
+                ),
+            ],
+                className='row'
+            ),
+            
+        ],
+            className='twelve columns'
+        ),
 
 @app.callback(
     Output('daily-rankings-graph', 'figure'),
@@ -369,64 +389,64 @@ def daily_ranking(df_fdta, selected_sea, selected_product):
     # else:
     #     return None
 
-# @app.callback(
-#     Output('annual-rankings', 'children'),
-#     [Input('product', 'value')])
-# def annual_ranking(selected_product):
-#     print(selected_product)
-#     if selected_product == 'extent-stats':
-#         df1 = df['Total Arctic Sea']
+@app.callback(
+    Output('annual-rankings', 'children'),
+    [Input('product', 'value')])
+def annual_ranking(selected_product):
+    print(selected_product)
+    if selected_product == 'extent-stats':
+        df1 = df['Total Arctic Sea']
 
-#         x = 0
+        x = 0
 
-#         rankings = [['2006', 0],['2007', 0],['2008', 0],['2009', 0],['2010', 0],['2011', 0],['2012', 0],['2013', 0],['2014', 0],['2015', 0],['2016', 0],['2017', 0],['2018', 0],['2019', 0]]
-#         rank = pd.DataFrame(rankings, columns = ['Year','Pts'])
+        rankings = [['2006', 0],['2007', 0],['2008', 0],['2009', 0],['2010', 0],['2011', 0],['2012', 0],['2013', 0],['2014', 0],['2015', 0],['2016', 0],['2017', 0],['2018', 0],['2019', 0]]
+        rank = pd.DataFrame(rankings, columns = ['Year','Pts'])
     
-#         while x < 366:
-#             dr1 = df1[(df1.index.month == df1.index[x].month) & (df1.index.day == df1.index[x].day)]
-#             dr_sort = dr1.sort_values(axis=0, ascending=True)
+        while x < 366:
+            dr1 = df1[(df1.index.month == df1.index[x].month) & (df1.index.day == df1.index[x].day)]
+            dr_sort = dr1.sort_values(axis=0, ascending=True)
         
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 10
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 9
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 8
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[3]), 'Pts'] += 7
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[4]), 'Pts'] += 6
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[5]), 'Pts'] += 5
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[6]), 'Pts'] += 4
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[7]), 'Pts'] += 3
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[8]), 'Pts'] += 2
-#             rank.loc[rank['Year'] == str(dr_sort.index.year[9]), 'Pts'] += 1
+            rank.loc[rank['Year'] == str(dr_sort.index.year[0]), 'Pts'] += 10
+            rank.loc[rank['Year'] == str(dr_sort.index.year[1]), 'Pts'] += 9
+            rank.loc[rank['Year'] == str(dr_sort.index.year[2]), 'Pts'] += 8
+            rank.loc[rank['Year'] == str(dr_sort.index.year[3]), 'Pts'] += 7
+            rank.loc[rank['Year'] == str(dr_sort.index.year[4]), 'Pts'] += 6
+            rank.loc[rank['Year'] == str(dr_sort.index.year[5]), 'Pts'] += 5
+            rank.loc[rank['Year'] == str(dr_sort.index.year[6]), 'Pts'] += 4
+            rank.loc[rank['Year'] == str(dr_sort.index.year[7]), 'Pts'] += 3
+            rank.loc[rank['Year'] == str(dr_sort.index.year[8]), 'Pts'] += 2
+            rank.loc[rank['Year'] == str(dr_sort.index.year[9]), 'Pts'] += 1
         
-#             rank.sort_values(by=['Pts'], ascending=True)
-#             x += 1
+            rank.sort_values(by=['Pts'], ascending=True)
+            x += 1
 
-#         sorted_rank = rank.sort_values('Pts', ascending=False)
-#         # print(rank)
+        sorted_rank = rank.sort_values('Pts', ascending=False)
+        # print(rank)
 
     
-#         return html.Div([
-#                 html.Div('Annual Ranks', style={'text-align': 'center'}),
-#                 html.Div([
-#                     html.Div([
-#                         html.Div([
-#                             html.Div('{}'.format(sorted_rank.iloc[y][0]), style={'text-align': 'center'}) for y in range(0,14)
-#                         ],
-#                             className='eight columns'
-#                         ),
-#                         html.Div([
-#                             html.Div('{:,}'.format(sorted_rank.iloc[y,1]), style={'text-align': 'left'}) for y in range(0,14)
-#                         ],
-#                             className='four columns'
-#                         ),  
-#                     ],
-#                         className='row'
-#                     ),
-#                 ],
-#                     className='round1'
-#                 ),      
-#             ],
-#                 className='round1'
-#             ),
+        return html.Div([
+                html.Div('Annual Ranks', style={'text-align': 'center'}),
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Div('{}'.format(sorted_rank.iloc[y][0]), style={'text-align': 'center'}) for y in range(0,14)
+                        ],
+                            className='eight columns'
+                        ),
+                        html.Div([
+                            html.Div('{:,}'.format(sorted_rank.iloc[y,1]), style={'text-align': 'left'}) for y in range(0,14)
+                        ],
+                            className='four columns'
+                        ),  
+                    ],
+                        className='row'
+                    ),
+                ],
+                    className='round1'
+                ),      
+            ],
+                className='round1'
+            ),
                     
 @app.callback(
     Output('df-fdta', 'children'),
