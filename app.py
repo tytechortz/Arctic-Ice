@@ -22,7 +22,9 @@ pd.options.display.float_format = '{:,}'.format
 value_range = [0, 365]
 
 # Read data
-df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+# df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+df = pd.read_csv('./cleaned_masie.csv', skiprows=1)
+print(df)
 
 # Format date and set indext to date
 df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
