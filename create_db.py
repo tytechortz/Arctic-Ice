@@ -16,13 +16,13 @@ df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian 
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
 
 print(df)
-# engine = sqlalchemy.create_engine("postgresql://postgres:1234@localhost/denver_temps")
-# con = engine.connect()
+engine = sqlalchemy.create_engine("postgresql://postgres:1234@localhost/denver_temps")
+con = engine.connect()
 
-# print(engine.table_names())
+print(engine.table_names())
 
-# table_name = 'temps'
-# df.to_sql(table_name, con)
-# print(engine.table_names())
+table_name = 'masie'
+df.to_sql(table_name, con)
+print(engine.table_names())
 
-# con.close()
+con.close()
