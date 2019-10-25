@@ -13,6 +13,7 @@ from scipy import stats
 from numpy import arange,array,ones 
 from scipy.stats import norm
 from pandas import DatetimeIndex
+from connect import ice_data
 
 app = dash.Dash(__name__)
 app.config['suppress_callback_exceptions']=True
@@ -23,16 +24,17 @@ value_range = [0, 365]
 
 # Read data
 # df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-df = pd.read_csv('./cleaned_masie.csv', skiprows=1)
+# df = pd.read_csv('./cleaned_masie.csv', skiprows=1)
+df = pd.DataFrame(ice_data)
 print(df)
 
 # Format date and set indext to date
-df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
-df.set_index('yyyyddd', inplace=True)
+# df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
+df.set_index(0, inplace=True)
 df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
      'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
-
+print(df)
 df1 = df['Total Arctic Sea']
 
 count_row = df.shape[0]
