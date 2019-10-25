@@ -7,13 +7,14 @@ import numpy as np
 import sqlite3
 from dash.dependencies import Input, Output
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pandas import Series
 from scipy import stats 
 from numpy import arange,array,ones 
 from scipy.stats import norm
 from pandas import DatetimeIndex
 from connect import ice_data
+from sqlalchemy import create_engine
 
 app = dash.Dash(__name__)
 app.config['suppress_callback_exceptions']=True
@@ -26,7 +27,7 @@ value_range = [0, 365]
 # df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
 # df = pd.read_csv('./cleaned_masie.csv', skiprows=1)
 df = pd.DataFrame(ice_data)
-print(df)
+# print(df)
 
 # Format date and set indext to date
 # df['yyyyddd'] = pd.to_datetime(df['yyyyddd'], format='%Y%j')
@@ -34,7 +35,7 @@ df.set_index(0, inplace=True)
 df.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
      'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
-print(df)
+# print(df)
 df1 = df['Total Arctic Sea']
 
 count_row = df.shape[0]
@@ -98,6 +99,35 @@ d = 1
 
 arctic_r = arctic[(arctic.index.month == m) & (arctic.index.day == d)]
 sort_arctic_r = arctic_r.sort_values(axis=0, ascending=True)
+
+last_day = df.index[-1] + timedelta(days=1)
+print(last_day)
+# ld = last_day.strftime("%Y-%m-%d")
+
+
+def update_data():
+    
+    df_ice = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+    print(df_ice)
+    df_ice['yyyyddd'] = pd.to_datetime(df_ice['yyyyddd'], format='%Y%j')
+    print(df_ice)
+    df_ice.set_index('yyyyddd', inplace=True)
+    df_ice.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
+     'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
+         'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
+
+    new_ice = df_ice.loc[last_day:]
+    print(new_ice)
+
+    # most_recent_data_date = last_day - timedelta(days=1)
+    # mrd = most_recent_data_date.strftime("%Y-%m-%d")
+
+    engine = create_engine('postgresql://postgres:1234@localhost:5432/sea_ice')
+    new_ice.to_sql('masie', engine, if_exists='append')
+
+    return(print('Data updated'))
+
+update_data()
 
 def get_layout():
     return html.Div(
@@ -197,6 +227,7 @@ def get_layout():
 
 app.layout = get_layout
 
+
 @app.callback(
     Output('stats-n-stuff', 'children'),
     [Input('product', 'value')])
@@ -253,17 +284,17 @@ def display_stats(value):
                     html.Div([
                         html.Div(id='annual-max-table')
                     ],
-                        className='three columns'
+                        className='two columns'
                     ),
                     html.Div([
                         html.Div(id='annual-min-table')
                     ],
-                        className='three columns'
+                        className='two columns'
                     ),
                     html.Div([
                         html.Div(id='annual-rankings')
                     ],
-                        className='three columns'
+                        className='two columns'
                     ),
                 ])
         ],
@@ -373,12 +404,12 @@ def record_ice_table(selected_sea, selected_value, df_fdta, max_rows=10):
                         html.Div([
                             html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
                         ],
-                            className='eight columns'
+                            className='four columns'
                         ),
                         html.Div([
-                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'left'}) for y in range(0,14)
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,14)
                         ],
-                            className='four columns'
+                            className='eight columns'
                         ),  
                     ],
                         className='row'
@@ -407,12 +438,12 @@ def record_ice_table_a(selected_sea, df_fdta, max_rows=10):
                         html.Div([
                             html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
                         ],
-                            className='eight columns'
+                            className='four columns'
                         ),
                         html.Div([
-                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'left'}) for y in range(0,14)
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,14)
                         ],
-                            className='four columns'
+                            className='eight columns'
                         ),  
                     ],
                         className='row'
