@@ -498,12 +498,12 @@ def annual_ranking(selected_product):
                 html.Div([
                     html.Div([
                         html.Div([
-                            html.Div('{}'.format(sorted_rank.iloc[y][0]), style={'text-align': 'center'}) for y in range(0,14)
+                            html.Div('{}'.format(sorted_rank.iloc[y][0]), style={'text-align': 'center'}) for y in range(0,15)
                         ],
                             className='eight columns'
                         ),
                         html.Div([
-                            html.Div('{:,}'.format(sorted_rank.iloc[y,1]), style={'text-align': 'left'}) for y in range(0,14)
+                            html.Div('{:,}'.format(sorted_rank.iloc[y,1]), style={'text-align': 'left'}) for y in range(0,15)
                         ],
                             className='four columns'
                         ),  
