@@ -25,6 +25,7 @@ value_range = [0, 365]
 
 # Read data
 # df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
+# df = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
 # df = pd.read_csv('./cleaned_masie.csv', skiprows=1)
 df = pd.DataFrame(ice_data)
 # print(df)
@@ -101,23 +102,23 @@ arctic_r = arctic[(arctic.index.month == m) & (arctic.index.day == d)]
 sort_arctic_r = arctic_r.sort_values(axis=0, ascending=True)
 
 last_day = df.index[-1] + timedelta(days=1)
-print(last_day)
+# print(last_day)
 # ld = last_day.strftime("%Y-%m-%d")
 
 
 def update_data():
     
     df_ice = pd.read_csv('ftp://sidads.colorado.edu/DATASETS/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv', skiprows=1)
-    print(df_ice)
+    # print(df_ice)
     df_ice['yyyyddd'] = pd.to_datetime(df_ice['yyyyddd'], format='%Y%j')
-    print(df_ice)
+    # print(df_ice)
     df_ice.set_index('yyyyddd', inplace=True)
     df_ice.columns = ['Total Arctic Sea', 'Beaufort Sea', 'Chukchi Sea', 'East Siberian Sea', 'Laptev Sea', 'Kara Sea',\
      'Barents Sea', 'Greenland Sea', 'Bafin Bay Gulf of St. Lawrence', 'Canadian Archipelago', 'Hudson Bay', 'Central Arctic',\
          'Bering Sea', 'Baltic Sea', 'Sea of Okhotsk', 'Yellow Sea', 'Cook Inlet']
 
     new_ice = df_ice.loc[last_day:]
-    print(new_ice)
+    # print(new_ice)
 
     # most_recent_data_date = last_day - timedelta(days=1)
     # mrd = most_recent_data_date.strftime("%Y-%m-%d")
@@ -309,10 +310,11 @@ def display_stats(value):
 def update_figure_b(selected_product, selected_sea, df_fdta):
     if selected_product == 'extent-date':
         df_fdta = pd.read_json(df_fdta)
-        print(selected_product)
+        # print(selected_product)
         dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
         dr_sea = dr[selected_sea]
         dr_sea.index = dr_sea.index.strftime('%Y-%m-%d')
+        print(dr_sea)
         
         # trend line
         def fit():
@@ -324,7 +326,7 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
             go.Bar(
                 x=dr_sea.index,
                 y=dr_sea,
-                name=('Extent')
+                 name=('Extent')
             ),
             go.Scatter(
                     x=dr_sea.index,
@@ -335,7 +337,7 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
         ]
         layout = go.Layout(
             xaxis={'title': 'Year'},
-            yaxis={'title': 'Ice Extent-Million km2'},
+            yaxis={'title': 'Ice Extent-Million km2', 'range':[(min(dr_sea)-(min(dr_sea)*.1)),(max(dr_sea)+(max(dr_sea)*.05))]},
             title='{} Values on {}'.format(selected_sea, dr_sea.index[-1]),
             plot_bgcolor = 'lightgray',
         )
@@ -348,7 +350,7 @@ def update_figure_b(selected_product, selected_sea, df_fdta):
     Input('product', 'value')])
 def daily_ranking(df_fdta, selected_sea, selected_product):
     if selected_product == 'extent-date':
-        print(selected_sea)
+        # print(selected_sea)
         df_fdta = pd.read_json(df_fdta)
         dr = df_fdta[(df_fdta.index.month == df_fdta.index[-1].month) & (df_fdta.index.day == df_fdta.index[-1].day)]
         # print(dr)
@@ -394,6 +396,7 @@ def record_ice_table(selected_sea, selected_value, df_fdta, max_rows=10):
     print(df_fdta)
     annual_max_all = df_fdta[selected_sea].loc[df_fdta.groupby(pd.Grouper(freq='Y')).idxmax().iloc[:, 0]]
     sorted_annual_max_all = annual_max_all.sort_values(axis=0, ascending=True)
+    print(sorted_annual_max_all)
    
     sama = pd.DataFrame({'Extent km2':sorted_annual_max_all.values,'YEAR':sorted_annual_max_all.index.year})
     sama = sama.round(0)
@@ -402,12 +405,12 @@ def record_ice_table(selected_sea, selected_value, df_fdta, max_rows=10):
                 html.Div([
                     html.Div([
                         html.Div([
-                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
+                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,15)
                         ],
                             className='four columns'
                         ),
                         html.Div([
-                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,14)
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,15)
                         ],
                             className='eight columns'
                         ),  
@@ -436,12 +439,12 @@ def record_ice_table_a(selected_sea, df_fdta, max_rows=10):
                 html.Div([
                     html.Div([
                         html.Div([
-                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,14)
+                            html.Div('{:.0f}'.format(sama.iloc[y][1]), style={'text-align': 'center'}) for y in range(0,15)
                         ],
                             className='four columns'
                         ),
                         html.Div([
-                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,14)
+                            html.Div('{:,.0f}'.format(sama.iloc[y,0]), style={'text-align': 'center'}) for y in range(0,15)
                         ],
                             className='eight columns'
                         ),  
@@ -459,7 +462,7 @@ def record_ice_table_a(selected_sea, df_fdta, max_rows=10):
     Output('annual-rankings', 'children'),
     [Input('product', 'value')])
 def annual_ranking(selected_product):
-    print(selected_product)
+    # print(selected_product)
     if selected_product == 'extent-stats':
         df1 = df['Total Arctic Sea']
 
@@ -528,7 +531,7 @@ def clean_fdta(selected_product):
     Input('product','value')])
 def display_graph_stats(ice, selected_product):
     # time.sleep(2)
-    print(selected_product)
+    # print(selected_product)
     if selected_product == 'monthly-bar':
         df_monthly = pd.read_json(ice)
         extent = df_monthly['data'].apply(pd.Series)
@@ -637,7 +640,7 @@ def update_current_stats(selected_sea, selected_product, df_fdta):
     record_min_difference = today_value - record_min
     record_low_max = sorted_annual_max_all[-1]
     record_max_difference = today_value - record_low_max
-    print(selected_product)
+    # print(selected_product)
     if selected_product == 'years-graph':
         return html.Div([
                     html.Div('Current Extent', style={'text-align': 'center'}),
@@ -759,4 +762,4 @@ def update_figure_c(month_value):
     return {'data': data, 'layout': layout}, df_monthly.to_json()
 
 if __name__ == "__main__":
-    app.run_server(port=8050, debug=False)
+    app.run_server(port=8045, debug=False)
